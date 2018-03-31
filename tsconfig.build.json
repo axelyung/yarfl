@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "allowJs": false,
+    "checkJs": false, 
+    "outDir": "es",
+    "skipLibCheck": true,
+    "strictNullChecks": true
+  },
+  "include": ["src"]
+}
