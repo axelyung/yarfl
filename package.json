@@ -46,13 +46,13 @@
   "peerDependencies": {
     "react": "^15.3.0 || ^16.0.0",
     "react-redux": "^4.0.0 || ^5.0.3",
-    "redux": "^3.0.0 || ^4.0.0"
+    "redux": "^3.0.0 || ^4.0.0",
+    "redux-thunk": "^2.3.0"
   },
   "dependencies": {
     "camel-case": "^3.0.0",
     "param-case": "^2.1.1",
     "ramda": "^0.25.0",
-    "redux-thunk": "^2.3.0",
     "sentence-case": "^2.1.1",
     "title-case": "^2.1.1",
     "validatorjs": "^3.14.2"

@@ -150,7 +150,7 @@ export const extract = <S extends object>(fields: Model<S, FieldState>, key: key
                     return { ...acc, [k]: node };
                 case FieldType.Array:
                 // TODO:
-                    return {};
+                    return acc;
             }
             return {};
         }, {}) as S;

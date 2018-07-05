@@ -1,4 +1,6 @@
-# YARFL: Yet Another Redux Forms Library
+# YARFL: Yet Another Redux Forms Library (experimental)
+
+## Warning: experimental, not ready for production
 
 A [Redux](http://redux.js.org/) validation library for [React]() that does not require the user to use any special React components.
 

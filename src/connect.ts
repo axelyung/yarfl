@@ -95,6 +95,13 @@ export const connectDirectly = <S extends object>(
       );
 };
 
+export const localFormMap = (config: CompleteConfig) => (state, dispatch) => {
+    const mappedState = createStateMapper(config)(state);
+    const mappedDispatch = mapDispatch(config)(dispatch);
+    const mergedProps = mergeFormProps(config)(mappedState, mappedDispatch);
+    return mergedProps;
+};
+
 export const createStateMapper = (config: CompleteConfig) => {
     const { name, mapState } = config;
     return (state: object) => {

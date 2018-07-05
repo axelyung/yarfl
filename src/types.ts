@@ -263,12 +263,12 @@ export interface FieldProps {
     clear: () => void;
     reset: () => void;
     showErrors: (showErrors?: boolean) => void;
+    bind: () => FieldBindProps;
     errors: string[];
     errorCount: number;
     errorMessage: string;
     valid: boolean;
     options?: MappedOption[];
-    bind: () => FieldBindProps;
     size?: number;
     length?: number;
 }

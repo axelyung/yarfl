@@ -1,7 +1,46 @@
+import { FieldProps, FormProps } from 'es/types';
+import * as R from 'ramda';
 import { Action, applyMiddleware, createStore, Store } from 'redux';
 import thunk from 'redux-thunk';
 import { init } from 'src';
 import { Config } from 'src/types';
+
+export const getIn = <T>(obj: object | any[], path: (string|number)[]) => R.path<T>(path, obj);
+
+const regex = /\[\d+\]/;
+
+const parseKey = (key: string) => {
+    if (key.includes('.') || regex.test(key)) {
+        const split = key.split('.')
+            .reduce((acc: any[], curr) => {
+                const match = regex.test(curr) && curr.match(/\[(\d+)\]/);
+                if (match) {
+                    const index = parseInt(match[1]);
+                    const noIndex = curr.replace(regex, '');
+                    return [...acc, noIndex, index];
+                }
+                return [...acc, curr];
+            }, []);
+        return split;
+    }
+    return [key];
+};
+
+export const mergeIn = <T extends object>(state: T, key: string, value: object): T => {
+    const fieldPath = parseKey(key);
+    const target = getIn(state, fieldPath);
+    const merged = R.merge(target, value);
+    return R.assocPath(fieldPath, merged, state);
+};
+
+export const mergeDeep = R.mergeDeepRight;
+
+export const mergeDeepIn = <T extends object>(state: T, key: string, value: object) => {
+    const fieldPath = parseKey(key);
+    const target = getIn(state, fieldPath);
+    const merged = mergeDeep(target, value);
+    return R.assocPath(fieldPath, merged, state);
+};
 
 const expectType = (target: any, type: string) => {
     expect(typeof target).toEqual(type);
@@ -63,3 +102,49 @@ export const createTestStore = (config: Config) => {
 };
 
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const checkFormProps = (props: FormProps<any>) => {
+    const size = Object.keys(props).length;
+    expect(size).toBe(11);
+    expect(props).toBeDefined();
+    const {
+        set,
+        clear,
+        reset,
+        select,
+        showErrors,
+        extract: propsExtract,
+        bind,
+        errors,
+        errorCount,
+        valid,
+        values,
+    } = props;
+    [set, clear, reset, select, showErrors, propsExtract, bind].map(fn => expectFunction(fn));
+    expectArray(errors);
+    expectNumber(errorCount);
+    expectBoolean(valid);
+    expectObject(values);
+};
+
+export const checkFieldProps = (props: FieldProps) => {
+    const size = Object.keys(props).length;
+    expect(size > 8).toBe(true);
+    expect(props).toBeDefined();
+    const {
+        set,
+        clear,
+        reset,
+        showErrors,
+        bind,
+        errors,
+        errorCount,
+        errorMessage,
+        valid,
+    } = props;
+    [set, clear, reset, showErrors, bind].map(fn => expectFunction(fn));
+    expectArray(errors);
+    expectNumber(errorCount);
+    expectString(errorMessage);
+    expectBoolean(valid);
+};

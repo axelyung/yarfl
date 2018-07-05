@@ -1,29 +1,37 @@
 // necessary import format
 // see https://stackoverflow.com/questions/44547201/typescript-react-not-importing-correctly
 import * as React from 'react';
-import { Provider } from 'react-redux';
-import { applyMiddleware, createStore, Store } from 'redux';
-import thunk from 'redux-thunk';
+import { localFormMap } from './connect';
+import { logError } from './helpers/utils';
 import { init } from './init';
 import { LocalFormProps } from './types';
 
-// TODO: implement a providerless solution, see https://nickdrane.com/write-your-own-redux-connect/
 const component = class <S extends object> extends React.Component<LocalFormProps<S>> {
-    private readonly store: Store;
-    private readonly formProvider: any;
+    private readonly reducer: any;
+    private readonly config: any;
 
     constructor(props: LocalFormProps<S>) {
         super(props);
-        const { initialState, reducer, FormProvider } = init(props.config);
+        const { initialState, reducer, config } = init(props.config);
         this.state = initialState;
-        this.formProvider = FormProvider;
-        this.store = createStore(reducer, initialState, applyMiddleware(thunk));
+        this.reducer = reducer;
+        this.config = config[props.config.name];
+    }
+
+    private dispatch = async (action) => {
+        if (typeof action === 'function') {
+            action(this.dispatch, () => this.state);
+        } else if ((action || {}).formName === this.config.name) {
+            this.setState(prevState => this.reducer(prevState, action));
+        } else {
+            logError(`Skipping dispatch in LocalForm instance '${this.config.name}'.`);
+        }
     }
 
     public render() {
         const { render } = this.props;
-        const formProvider = React.createElement(this.formProvider, { render });
-        return React.createElement(Provider, { store: this.store }, formProvider);
+        const props = localFormMap(this.config)(this.state, this.dispatch);
+        return render(props);
     }
 };
 

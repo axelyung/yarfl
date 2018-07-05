@@ -158,7 +158,8 @@ export const createResetFieldReducer = () =>
 export const createValidateFieldReducer = () => (state: FormState, action: ValidateAction<true>) => {
     const { key, validator } = action;
     const fieldErrors = validator.errors.get(key);
-    return setInWithKey(state, key, 'errors', fieldErrors);
+    const updated = setInWithKey(state, key, 'errors', fieldErrors);
+    return updated;
 };
 
 export const createShowFieldErrorsReducer = () => (state: FormState, action: ShowErrorsAction<true>) => {

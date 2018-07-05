@@ -15,7 +15,7 @@ export const createReducer = <S extends object>(config: CompleteConfig<S>, initi
     const nodeReducer = createNodeReducer(config);
     const formReducer = createFormReducer(config);
     return (state: FormState<S> = initialState, action: ActionUnknown): FormState<S> => {
-        if (action.formName === config.name) {
+        if ((action || {}).formName === config.name) {
             const fieldReduction = fieldReducer(state, action);
             const arrayReduction = arrayReducer(fieldReduction, action);
             const nodeReduction = nodeReducer(arrayReduction, action);

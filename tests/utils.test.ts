@@ -1,4 +1,34 @@
-import { flatten, parseKey, pick } from 'es/helpers/utils';
+import { extract, flatten, parseKey, pick } from 'es/helpers/utils';
+
+test('extract', () => {
+    const input = {
+        field1: {
+            fieldType: 'SIMPLE',
+            value: 1,
+        },
+        field2: {
+            fieldType: 'PARENT',
+            fields: {
+                field1: {
+                    fieldType: 'SIMPLE',
+                    value: '1',
+                },
+            },
+        },
+        field3: {
+            fieldType: 'SIMPLE',
+            value: '',
+        },
+    };
+    const expectation = extract(input as any, 'value');
+    expect(expectation).toEqual({
+        field1: 1,
+        field2: {
+            field1: '1',
+        },
+        field3: '',
+    });
+});
 
 test('flatten', () => {
     const input = {
@@ -58,7 +88,3 @@ test('pick', () => {
         expect(parsed).toEqual(output);
     });
 });
-
-// test('check for thunk', () => {
-//     console.log(checkForThunk());
-// });
