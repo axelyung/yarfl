@@ -1,6 +1,6 @@
 {
   "name": "yarfl",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Yet Another Redux Forms Library",
   "author": {
     "name": "Axel Yung",
@@ -15,7 +15,6 @@
   },
   "main": "lib/index.js",
   "module": "es/index.js",
-  "browser": "dist/yarfl.js",
   "unpkg": "dist/yarfl.min.js",
   "jsdelivr": "dist/yarfl.min.js",
   "types": "dist/lib/index.d.ts",
