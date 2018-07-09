@@ -6,7 +6,6 @@
     "allowJs": false,
     "checkJs": false, 
     "outDir": "es",
-    "skipLibCheck": true,
     "strictNullChecks": true
   },
   "include": ["src"]
