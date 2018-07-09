@@ -1,6 +1,6 @@
-const createTypeKey = (key: string) => `@@REDUX_VALIDATED/${key}`;
+const createTypeKey = (key: string) => `@@YARFL/${key}`;
 
-export const types = {
+export default {
     FORM_UPDATE: createTypeKey('FORM_UPDATE'),
     FORM_CLEAR: createTypeKey('FORM_CLEAR'),
     FORM_RESET: createTypeKey('FORM_RESET'),

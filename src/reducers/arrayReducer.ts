@@ -1,4 +1,4 @@
-import { types } from '../actions/types';
+import types from '../actions/types';
 import { checkActionForKey, checkActionForKeyAndIndex } from '../helpers/checkers';
 import { append, getIn, parseKey, removeAt, setInWithPath } from '../helpers/utils';
 import {
@@ -7,7 +7,7 @@ import {
     FormState,
     Model,
     SimpleFieldState,
-    } from '../types';
+    } from '../typings';
 
 export const createArrayReducer = () =>
     (state: FormState, action: ActionUnknown) => {

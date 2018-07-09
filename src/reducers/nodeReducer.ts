@@ -1,5 +1,5 @@
-import { creatorFactory } from '../actions/creators';
-import { types } from '../actions/types';
+import creatorFactory from '../actions/creatorFactory';
+import types from '../actions/types';
 import { checkActionForKey, checkActionForObjectValue } from '../helpers/checkers';
 import { extract, setInWithPath } from '../helpers/utils';
 import {
@@ -13,7 +13,7 @@ import {
     CompleteConfig,
     FormState,
     ShowErrorsAction,
-    } from '../types';
+    } from '../typings';
 import { createValidateFieldReducer } from './fieldReducer';
 import { formUpdateReducer } from './formReducer';
 

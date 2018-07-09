@@ -48,3 +48,9 @@ build/config/buildinfo.properties
 /inc/.DS_Store
 tsconfig.json
 coverage
+
+# include in git
+src
+coverage
+.vscode
+tests

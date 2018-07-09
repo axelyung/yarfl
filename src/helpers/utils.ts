@@ -1,14 +1,14 @@
 import * as R from 'ramda';
 import {
+    ArrayFieldState,
     CompleteConfig,
-    Config,
     FieldState,
     FieldType,
     FormState,
     Model,
     ParentFieldState,
     SimpleFieldState,
-    } from '../types';
+    } from '../typings';
 import { checkPath } from './checkers';
 
 export const firstDefined = (...args: any[]) => {
@@ -34,31 +34,6 @@ export const kebabCase = caseFnWrapper(require('param-case'));
 
 export const camelCase = caseFnWrapper(require('camel-case'));
 // tslint:enable:no-var-requires
-
-export const addDefaultsToConfig = <S extends object>(config: Config<S>): CompleteConfig<S> => {
-    return {
-        // useLang?: string;
-        method: 'POST',
-        customRules: [],
-        errorMessages: {},
-        validateOnInit: true,
-        validateOnFocus: false,
-        validateOnBlur: true,
-        validateOnChange: false,
-        validateOnClear: false,
-        validateOnReset: false,
-        showErrorsOnInit: false,
-        showErrorsOnFocus: false,
-        showErrorsOnBlur: true,
-        showErrorsOnChange: false,
-        showErrorsOnClear: false,
-        showErrorsOnReset: false,
-        autoParseNumbers: true,
-        skipDefaults: false,
-        mapState: (state: any) => state[config.name],
-        ...config,
-    } as CompleteConfig<S>;
-};
 
 export const isNonEmptyArray = (test: any) => !!(test && Array.isArray(test) && test.length);
 
@@ -114,7 +89,9 @@ export const mergeDeepIn = <T extends object>(state: T, key: string, value: obje
 
 // recursively merges value up the state tree
 export const mergeUp = <T extends object>(state: T, key: string, value: object) => {
-    const updated = mergeIn(state, key, value);
+    const updated = !/\[\d+\]$/.test(key)
+        ? mergeIn(state, key, value)
+        : state;
     if (key.includes('.')) {
         const path = key.split('.');
         const nextKey = path.slice(0, path.length - 1).join('.');
@@ -144,18 +121,22 @@ export const extract = <S extends object>(fields: Model<S, FieldState>, key: key
                     const { ignoreEmptyStrings } = optionsWithDefaults;
                     const skip = ignoreEmptyStrings && value === '';
                     return skip ? acc : { ...acc, [k]: value };
-                case FieldType.Parent:
-                    const entryFields = (entry as ParentFieldState).fields;
-                    const node = extract(entryFields, key, options);
-                    return { ...acc, [k]: node };
                 case FieldType.Array:
-                // TODO:
-                    return acc;
+                    const arrayFields = (entry as ArrayFieldState).fields;
+                    const arr =  arrayFields.map(field => extract(field, key, options));
+                    return { ...acc, [k]: arr };
+                case FieldType.Parent:
+                    const childFields = (entry as ParentFieldState).fields;
+                    const node = extract(childFields, key, options);
+                    return { ...acc, [k]: node };
+                default:
+                    // @ts-ignore
+                    return { ...acc, [k]: extract(entry, key, options) };
             }
             return {};
         }, {}) as S;
     return optionsWithDefaults.flatten
-        ? flatten(extraction)
+        ? flattenObj(extraction)
         : extraction;
 };
 
@@ -167,14 +148,29 @@ export const logError = (...errorMessage: string[]) => {
     console.error(`REDUX VALIDATED: ${errorMessage.join(' ')}`);
 };
 
-export const flatten = (obj: object) => _flatten(obj);
+export const flatten = (target: object| any[]) =>
+    Array.isArray(target)
+        ? flattenArray(target)
+        : flattenObj(target);
 
-// tslint:disable-next-line:variable-name
-const _flatten = (obj: object, prefix?: string): object => {
+const flattenArray = (arr: any[]) => arr.reduce((a, b) => {
+    return Array.isArray(b)
+        ? [...a, ...flattenArray(b)]
+        : [...a, b];
+}, []);
+
+const flattenObj = (obj: object, prefix?: string): object => {
     return Object.entries(obj).reduce((acc, [key, entry]: [string, any]) => {
         const k = prefix ? `${prefix}.${key}` : key;
+        if (isNonEmptyArray(entry)) {
+            const map = entry.reduce((prev, next, index) => ({
+                ...prev,
+                [`${k}[${index}]`]: next,
+            }), {});
+            return { ...acc, ...flattenObj(map) };
+        }
         if (typeof entry === 'object' && !Array.isArray(entry)) {
-            return { ...acc, ..._flatten(entry, k) };
+            return { ...acc, ...flattenObj(entry, k) };
         }
         return { ...acc, [k]: entry };
     }, {});

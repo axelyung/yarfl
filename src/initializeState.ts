@@ -1,3 +1,4 @@
+import creatorFactory from './actions/creatorFactory';
 import {
     camelCase,
     firstDefined,
@@ -5,7 +6,9 @@ import {
     kebabCase,
     titleCase,
 } from './helpers/utils';
+import { validatorFactory } from './helpers/validator';
 import { createNewField } from './reducers/arrayReducer';
+import { formShowErrorsReducer, formValidateReducer } from './reducers/formReducer';
 import {
     CompleteConfig,
     ConfigField,
@@ -17,28 +20,42 @@ import {
     Option,
     PartialModel,
     SimpleFieldState,
-} from './types';
+} from './typings';
 
 export const initializeFormState = <S extends object>(config: CompleteConfig<S>, isAsync: boolean = false): FormState<S> => {
-    const { name } = config;
-    const action = firstDefined(config.action, '');
-    const method = firstDefined(config.method, 'POST');
+    const {
+        name,
+        extra = {},
+        action = '',
+        method = 'POST',
+    } = config;
+    const fields = initFields(config.fields, config.addDefaults);
     const state = {
         action,
         name,
         method,
-        fields: initFields(config.fields, config.addDefaults),
+        fields,
         isAsync,
+        extra,
     };
-    // if (showErrorsOnInit) {
-    //     const showErrorsAction = actionCreatorFactory(config).showFormErrors(true);
-    //     return formShowErrorsReducer(config)(state, showErrorsAction);
-    // }
-    // if (validateOnInit) {
-    //     const validator = validatorFactory(config)(state);
-    //     const validateAction = actionCreatorFactory(config).validateForm(validator);
-    //     return formValidateReducer(config)(state, validateAction);
-    // }
+    return initHooks(config, state as any);
+};
+
+const initHooks = (config: CompleteConfig, state: FormState) => {
+    const { showErrorsOnInit, validateOnInit } = config;
+    if (showErrorsOnInit) {
+        const { showFormErrors, validateForm } = creatorFactory(config);
+        const showErrorsAction = showFormErrors(true);
+        const updated = formShowErrorsReducer(config)(state, showErrorsAction);
+        const validator = validatorFactory(config)(state);
+        const validateAction = validateForm(validator);
+        return formValidateReducer(config)(updated, validateAction);
+    }
+    if (validateOnInit) {
+        const validator = validatorFactory(config)(state);
+        const validateAction = creatorFactory(config).validateForm(validator);
+        return formValidateReducer(config)(state, validateAction);
+    }
     return state;
 };
 
@@ -55,6 +72,7 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         touched: false,
         changed: false,
         showErrors: false,
+        extra: field.extra || {},
     };
     if (field.fields) {
         const fields = initFields(field.fields);

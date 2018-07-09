@@ -1,5 +1,5 @@
-import { creatorFactory } from '../actions/creators';
-import { types } from '../actions/types';
+import creatorFactory from '../actions/creatorFactory';
+import types from '../actions/types';
 import { checkActionForObjectValue } from '../helpers/checkers';
 import { extract } from '../helpers/utils';
 import {
@@ -16,7 +16,7 @@ import {
     InputValue,
     ShowErrorsAction,
     ValidateAction,
-    } from '../types';
+    } from '../typings';
 import { createValidateFieldReducer } from './fieldReducer';
 
 export const createFormReducer = <S extends object>(config: CompleteConfig<S>) =>

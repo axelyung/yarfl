@@ -1,12 +1,12 @@
 import * as Validator from 'validatorjs';
 import { extract, titleCase } from '../helpers/utils';
-import { CompleteConfig, CustomRule, FormState } from '../types';
+import { CompleteConfig, CustomRule, FormState } from '../typings';
 
 const common = <S extends object>(config: CompleteConfig<S>) => (state: FormState<S>) => {
     const { errorMessages, attributeFormatter } = config;
     const { fields } = state;
-    const data = extract(fields, 'value') as S;
-    const rules = extract(fields, 'rules', { ignoreEmptyStrings: true });
+    const data = extract(fields, 'value', { flatten: true }) as S;
+    const rules = extract(fields, 'rules', { ignoreEmptyStrings: true, flatten: true });
     // TODO: make this a configurable action
     const validation = (errorMessages as any || []).length
         ? new Validator<S>(data, rules, errorMessages)
@@ -42,7 +42,7 @@ export const registerCustomRules = (customRules: CustomRule[]) => {
         }
         Validator.register(name, callback, message);
         return false;
-    }).reduce((acc, curr) => acc || curr);
+    }).some(isAsync => isAsync);
 };
 
 export const reigsterErrorMessages = (messages: Validator.ErrorMessages) => {

@@ -3,14 +3,16 @@ import {
   connect, Options,
 } from 'react-redux';
 import { Dispatch } from 'redux';
-import { thunkFactory } from './actions/thunks';
+import ThunkFactory from './actions/ThunkFactory';
 import {
   extract,
+  flatten,
   pick,
   selectField,
   throwError,
 } from './helpers/utils';
 import {
+  ArrayFieldProps,
   CompleteConfig,
   FieldBindProps,
   FieldState,
@@ -24,7 +26,7 @@ import {
   ParentFieldProps,
   SimpleFieldProps,
   SimpleFieldState,
-} from './types';
+} from './typings';
 
 export const createConnector = <S extends object>(config: CompleteConfig<S>) => (
   mapStateToProps?: any,
@@ -120,8 +122,8 @@ export const createStateMapper = (config: CompleteConfig) => {
 export const mapDispatch = <S extends object>(config: CompleteConfig<S>) => (
   dispatch: Dispatch<any>,
 ) => {
-    const thunks = thunkFactory(config);
-    thunks.updateField.bind(thunks);
+    const thunks = new ThunkFactory(config).getThunks();
+    // thunks.updateField.bind(thunks);
     const {
         updateForm,
         clearForm,
@@ -134,6 +136,8 @@ export const mapDispatch = <S extends object>(config: CompleteConfig<S>) => (
         resetField,
         showFieldErrors,
         validateField,
+        addArrayField,
+        deleteArrayField,
     } = thunks;
     return {
         updateForm: (value: any) => dispatch(updateForm(value)),
@@ -149,6 +153,8 @@ export const mapDispatch = <S extends object>(config: CompleteConfig<S>) => (
         validateField: (key: string) => dispatch(validateField(key)),
         showFieldErrors: (key: string, showErrors?: boolean) =>
             dispatch(showFieldErrors(key, showErrors)),
+        addArrayField: (key: string) => dispatch(addArrayField(key)),
+        deleteArrayField: (key: string, index: number) => dispatch(deleteArrayField(key, index)),
     };
 };
 
@@ -200,20 +206,23 @@ const createFormBinder = <S extends object>(
 };
 
 const createFormProps = () => (state: FormState) => {
-    const errors = Object.values(extract(state.fields, 'errors', { flatten: true }));
-    const errorCount = 1;
+    const { fields, extra } = state;
+    const errors = Object.values(extract(fields, 'errors', { ignoreEmptyStrings: true, flatten: true }));
+    const errorCount = errors.length;
     return {
+        extra,
         errors,
         errorCount,
-        valid: !!errorCount,
+        valid: !errorCount,
     };
 };
 
 const createSelect = <S extends object>() => (
   state: FormState<S>,
   dispatchers: any,
-) => (keyStr: string): SimpleFieldProps | ParentFieldProps => {
-    const props = selectField(state, keyStr) as any;
+  prefix?: string,
+) => (keyStr: string) => {
+    const props = selectField(state, prefix ? `${prefix}.${keyStr}` : keyStr) as any;
     if (!props) {
         throwError(
             `Key '${keyStr}' does not correspond to an existing node in the state.`,
@@ -221,11 +230,11 @@ const createSelect = <S extends object>() => (
         );
     }
     const methods = createFieldMethods(keyStr, props, dispatchers);
-    const { errors, showErrors } = props;
-    const errorCount = errors
-        ? errors.length
-        : Object.values(extract(props.fields, 'errors', { flatten: true }))
-            .reduce((acc, curr) => [...acc, ...curr], []);
+    const { showErrors, extra, fields, fieldType } = props;
+    const errors = fieldType === FieldType.Simple
+        ? props.errors
+        : flatten(Object.values(extract(fields, 'errors', { flatten: true })));
+    const errorCount = errors.length;
     const valid = !errorCount;
     const common = {
         ...props,
@@ -233,7 +242,12 @@ const createSelect = <S extends object>() => (
         errors,
         errorCount,
         valid,
+        extra,
     };
+    if (props.fieldType === FieldType.Array) {
+        common.length = fields.length;
+        return common as ArrayFieldProps;
+    }
     if (props.fieldType === FieldType.Parent) {
         return common as ParentFieldProps;
     }
@@ -246,16 +260,34 @@ const createFieldMethods = (
     key: string,
     props: FieldState,
     dispatchers: any) => {
-    const { updateField, clearField, resetField, showFieldErrors } = dispatchers;
+    const {
+        updateField,
+        clearField,
+        resetField,
+        showFieldErrors,
+        addArrayField,
+        deleteArrayField,
+    } = dispatchers;
     const common = {
         set: (value: any) => updateField(key, value),
         clear: () => clearField(key),
         reset: () => resetField(key),
         showErrors: (showErrors?: boolean) => showFieldErrors(key, showErrors),
     };
-    return props.fieldType === FieldType.Simple
-        ? { ...common, bind: createFieldBinder(key, props, dispatchers) }
-        : common;
+    if (props.fieldType === FieldType.Array) {
+        return {
+            ...common,
+            add: () => addArrayField(key),
+            del: (index: number) => deleteArrayField(key, index),
+        };
+    }
+    if (props.fieldType === FieldType.Simple) {
+        return {
+            ...common,
+            bind: createFieldBinder(key, props, dispatchers),
+        };
+    }
+    return common;
 };
 
 const createFieldBinder = (
