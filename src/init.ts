@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { InferableComponentEnhancer } from 'react-redux';
 import { combineReducers, compose } from 'redux';
-import { thunkFactory } from './actions/thunks';
+import ThunkFactory from './actions/ThunkFactory';
 import { connectDirectly } from './connect';
 import { FormProviderComponent } from './FormProvider';
 import { checkConfigs } from './helpers/checkers';
-import { addDefaultsToConfig, mergeDeep } from './helpers/utils';
+import { mergeDeep } from './helpers/utils';
 import { registerCustomRules, reigsterErrorMessages } from './helpers/validator';
 import { initializeFormState } from './initializeState';
 import { createReducer } from './reducers';
@@ -16,7 +16,7 @@ import {
     FormsConnect,
     Model,
     StateWithForms,
-    } from './types';
+    } from './typings';
 
 export function init(...configs: Config[]) {
     checkConfigs(configs);
@@ -61,7 +61,7 @@ export function init(...configs: Config[]) {
     };
 }
 
-function initForm<S extends object>(config: Config<S>) {
+const initForm = <S extends object>(config: Config<S>) => {
     const { customRules, errorMessages } = config;
     const isAsync = customRules && customRules.length
         ? registerCustomRules(customRules)
@@ -75,7 +75,7 @@ function initForm<S extends object>(config: Config<S>) {
     const connect = connectDirectly(configWithDefaults);
     const formProvider = connect(FormProviderComponent);
     // TODO: include option to return selectors
-    const actionCreators = thunkFactory(configWithDefaults);
+    const actionCreators = new ThunkFactory(configWithDefaults).getThunks();
     const initialState = { [config.name]: initialFormState };
     return {
         initialState,
@@ -85,4 +85,31 @@ function initForm<S extends object>(config: Config<S>) {
         config: configWithDefaults,
         actionCreators,
     };
-}
+};
+
+const addDefaultsToConfig = <S extends object>(config: Config<S>): CompleteConfig<S> => {
+    return {
+        // useLang?: string;
+        method: 'POST',
+        customRules: [],
+        errorMessages: {},
+        validateOnInit: true,
+        validateOnFocus: false,
+        validateOnBlur: true,
+        validateOnChange: true,
+        validateOnClear: true,
+        validateOnReset: true,
+        validateOnAdd: true,
+        validateOnDelete: true,
+        showErrorsOnInit: false,
+        showErrorsOnFocus: false,
+        showErrorsOnBlur: true,
+        showErrorsOnChange: false,
+        showErrorsOnClear: false,
+        showErrorsOnReset: false,
+        autoParseNumbers: true,
+        skipDefaults: false,
+        mapState: (state: any) => state[config.name],
+        ...config,
+    } as CompleteConfig<S>;
+};

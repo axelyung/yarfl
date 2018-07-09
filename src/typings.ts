@@ -52,6 +52,8 @@ interface WithValidateProps extends Object {
     validateOnChange: boolean;
     validateOnClear: boolean;
     validateOnReset: boolean;
+    validateOnAdd: boolean;
+    validateOnDelete: boolean;
 }
 
 interface WithShowErrorsProps extends Object {
@@ -97,6 +99,7 @@ interface ConfigBase extends WithValidateProps, WithShowErrorsProps, FormAttribu
     attributeFormatter?: (attribute: string) => string;
     autoParseNumbers: boolean;
     addDefaults: boolean;
+    extra: object;
 }
 
 export interface Config<S extends object = UnspecifiedState> extends Partial<ConfigBase> {
@@ -151,6 +154,7 @@ export type FieldState = (SimpleFieldState | ParentFieldState | ArrayFieldState)
 
 export interface FormState<S extends object = UnspecifiedState> extends FormAttributes {
     isAsync: boolean;
+    extra: object;
     fields: Model<S, FieldState>;
 }
 
@@ -246,6 +250,7 @@ export interface FormProps<S extends object> {
     errorCount: number;
     valid: boolean;
     values: S;
+    extra: object;
 }
 
 export interface FormBindProps<S> extends FormAttributes {
@@ -268,9 +273,10 @@ export interface FieldProps {
     errorCount: number;
     errorMessage: string;
     valid: boolean;
+    extra?: object;
     options?: MappedOption[];
-    size?: number;
-    length?: number;
+    // size?: number;
+    // length?: number;
 }
 
 export interface SimpleFieldProps extends FieldProps, SimpleField {

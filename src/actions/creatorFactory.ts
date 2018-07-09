@@ -1,7 +1,7 @@
-import { ActionCreators, CompleteConfig, InputValue } from '../types';
-import { types } from './types';
+import { ActionCreators, CompleteConfig, InputValue } from '../typings';
+import types from './types';
 
-export const creatorFactory = <S extends Object = any>(config: CompleteConfig<S>): ActionCreators => {
+export default <S extends Object = any>(config: CompleteConfig<S>): ActionCreators => {
     const formName = config.name;
     return {
         updateForm: (value: object) => ({

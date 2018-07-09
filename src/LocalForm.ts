@@ -4,7 +4,7 @@ import * as React from 'react';
 import { localFormMap } from './connect';
 import { logError } from './helpers/utils';
 import { init } from './init';
-import { LocalFormProps } from './types';
+import { LocalFormProps } from './typings';
 
 const component = class <S extends object> extends React.Component<LocalFormProps<S>> {
     private readonly reducer: any;
@@ -18,7 +18,7 @@ const component = class <S extends object> extends React.Component<LocalFormProp
         this.config = config[props.config.name];
     }
 
-    private dispatch = async (action) => {
+    private dispatch = (action) => {
         if (typeof action === 'function') {
             action(this.dispatch, () => this.state);
         } else if ((action || {}).formName === this.config.name) {

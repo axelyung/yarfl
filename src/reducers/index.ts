@@ -7,7 +7,7 @@ import {
     CompleteConfig,
     FormState,
     Reducer,
-    } from '../types';
+    } from '../typings';
 
 export const createReducer = <S extends object>(config: CompleteConfig<S>, initialState: FormState<S>): Reducer<S> => {
     const fieldReducer = createFieldReducer(config);

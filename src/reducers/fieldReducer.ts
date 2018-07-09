@@ -1,4 +1,4 @@
-import { types } from '../actions/types';
+import types from '../actions/types';
 import {
     checkActionForInputValue,
     checkActionForKey,
@@ -21,7 +21,7 @@ import {
     InputValue,
     ShowErrorsAction,
     ValidateAction,
-    } from '../types';
+    } from '../typings';
 
 export const createFieldReducer = <S extends object>(config: CompleteConfig<S>) =>
     (state: FormState, action: ActionUnknown) => {
@@ -139,9 +139,7 @@ export const createResetFieldReducer = () =>
     (state: FormState, action: ActionWithKey) => {
         const { key } = action;
         const dfault = (selectField(state, key) as any).default;
-        const valueUpdated = setInWithKey(state, key, 'value', dfault);
-        // TODO: remove?
-        const errorsUpdated = valueUpdated; // setIn(valueUpdated, key, 'errors', []);
+        const errorsUpdated = setInWithKey(state, key, 'value', dfault);
         return key.includes('.')
             ? mergeUp(errorsUpdated, key, {
                 changed: false,
@@ -158,8 +156,7 @@ export const createResetFieldReducer = () =>
 export const createValidateFieldReducer = () => (state: FormState, action: ValidateAction<true>) => {
     const { key, validator } = action;
     const fieldErrors = validator.errors.get(key);
-    const updated = setInWithKey(state, key, 'errors', fieldErrors);
-    return updated;
+    return setInWithKey(state, key, 'errors', fieldErrors);
 };
 
 export const createShowFieldErrorsReducer = () => (state: FormState, action: ShowErrorsAction<true>) => {

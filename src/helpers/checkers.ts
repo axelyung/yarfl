@@ -12,7 +12,7 @@ import {
     FormProviderProps,
     ParentFieldState,
     SimpleFieldState,
-} from '../types';
+} from '../typings';
 
 export const checkConfigs = (configs: Config[]) => {
     const checkedConfigs = configs.map(checkConfig);
