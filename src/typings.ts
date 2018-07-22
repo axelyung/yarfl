@@ -45,26 +45,6 @@ interface WithFieldsArray<S> {
     fields: Model<S, SimpleFieldState>[];
 }
 
-interface WithValidateProps extends Object {
-    validateOnInit: boolean;
-    validateOnFocus: boolean;
-    validateOnBlur: boolean;
-    validateOnChange: boolean;
-    validateOnClear: boolean;
-    validateOnReset: boolean;
-    validateOnAdd: boolean;
-    validateOnDelete: boolean;
-}
-
-interface WithShowErrorsProps extends Object {
-    showErrorsOnInit: boolean;
-    showErrorsOnFocus: boolean;
-    showErrorsOnBlur: boolean;
-    showErrorsOnChange: boolean;
-    showErrorsOnClear: boolean;
-    showErrorsOnReset: boolean;
-}
-
 export interface ConfigField extends InputProps, Field {
     options?: string[] | Option[];
     fields?: Model<any, Partial<ConfigField>>;
@@ -90,7 +70,7 @@ interface FormAttributes {
     onInvalid?: () => any;
 }
 
-interface ConfigBase extends WithValidateProps, WithShowErrorsProps, FormAttributes {
+interface ConfigBase extends FormAttributes {
     customRules: CustomRule[];
     errorMessages: Validator.ErrorMessages;
     mapState: (state: object) => FormState;
@@ -100,6 +80,20 @@ interface ConfigBase extends WithValidateProps, WithShowErrorsProps, FormAttribu
     autoParseNumbers: boolean;
     addDefaults: boolean;
     extra: object;
+    validateOnInit: boolean;
+    validateOnFocus: boolean;
+    validateOnBlur: boolean;
+    validateOnChange: boolean;
+    validateOnClear: boolean;
+    validateOnReset: boolean;
+    validateOnAdd: boolean;
+    validateOnDelete: boolean;
+    showErrorsOnInit: boolean;
+    showErrorsOnFocus: boolean;
+    showErrorsOnBlur: boolean;
+    showErrorsOnChange: boolean;
+    showErrorsOnClear: boolean;
+    showErrorsOnReset: boolean;
 }
 
 export interface Config<S extends object = UnspecifiedState> extends Partial<ConfigBase> {
@@ -239,6 +233,7 @@ export interface ActionCreators extends Model<{}, ActionCreator<Action>> {
 export type Reducer<S extends object> = ReduxReducer<FormState<S>, ActionUnknown>;
 
 export interface FormProps<S extends object> {
+    name: string;
     set: (obj: Partial<S>) => void;
     clear: () => void;
     reset: () => void;

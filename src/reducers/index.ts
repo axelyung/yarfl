@@ -1,13 +1,13 @@
-import { createArrayReducer } from '../reducers/arrayReducer';
-import { createFieldReducer } from '../reducers/fieldReducer';
-import { createFormReducer } from '../reducers/formReducer';
-import { createNodeReducer } from '../reducers/nodeReducer';
 import {
     ActionUnknown,
     CompleteConfig,
     FormState,
     Reducer,
     } from '../typings';
+import { createArrayReducer } from './arrayReducer';
+import { createFieldReducer } from './fieldReducer';
+import { createFormReducer } from './formReducer';
+import { createNodeReducer } from './nodeReducer';
 
 export const createReducer = <S extends object>(config: CompleteConfig<S>, initialState: FormState<S>): Reducer<S> => {
     const fieldReducer = createFieldReducer(config);
