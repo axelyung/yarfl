@@ -1,59 +1,59 @@
 import { SyntheticEvent } from 'react';
-import {
-  connect, Options,
-} from 'react-redux';
+import { connect, Options } from 'react-redux';
 import { Dispatch } from 'redux';
 import ThunkFactory from './actions/ThunkFactory';
 import {
-  extract,
-  flatten,
-  pick,
-  selectField,
-  throwError,
+    extract,
+    flatten,
+    pick,
+    selectField,
+    throwError,
 } from './helpers/utils';
 import {
-  ArrayFieldProps,
-  CompleteConfig,
-  FieldBindProps,
-  FieldState,
-  FieldType,
-  FormBindProps,
-  FormProps,
-  FormState,
-  InputProps,
-  InputValue,
-  MappedOption,
-  ParentFieldProps,
-  SimpleFieldProps,
-  SimpleFieldState,
+    ArrayFieldProps,
+    CompleteConfig,
+    FieldBindProps,
+    FieldState,
+    FieldType,
+    FormBindProps,
+    FormProps,
+    FormState,
+    InputProps,
+    InputValue,
+    MappedOption,
+    ParentFieldProps,
+    SimpleFieldProps,
+    SimpleFieldState,
 } from './typings';
 
-export const createConnector = <S extends object>(config: CompleteConfig<S>) => (
-  mapStateToProps?: any,
-  mapDispatchToProps?: any,
-  mergeProps?: any,
-  options?: any,
+export const createConnector = <S extends object>(
+    config: CompleteConfig<S>,
+) => (
+    mapStateToProps?: any,
+    mapDispatchToProps?: any,
+    mergeProps?: any,
+    options?: any,
 ) => {
     const extendedMapState = (state: object) => {
         return {
-            REDUX_VALIDATED: config.mapState(state),
+            __YARFL__: config.mapState(state),
             ...(mapStateToProps ? mapStateToProps(state) : {}),
         };
     };
     const extendedMapDispatch = (dispatch: Dispatch<any>) => ({
-        REDUX_VALIDATED: mapDispatch(config)(dispatch),
+        __YARFL__: mapDispatch(config)(dispatch),
         ...(mapDispatchToProps ? mapDispatchToProps(dispatch) : {}),
     });
     const extendedMergeProps = (
-    stateProps: any,
-    dispatchProps: any,
-    ownProps: object,
-  ) => {
-        const formState = stateProps.REDUX_VALIDATED;
-        const formDispatchers = dispatchProps.REDUX_VALIDATED;
+        stateProps: any,
+        dispatchProps: any,
+        ownProps: object,
+    ) => {
+        const formState = stateProps.__YARFL__;
+        const formDispatchers = dispatchProps.__YARFL__;
         const userMergedProps = mergeProps
-      ? mergeProps(stateProps, dispatchProps, ownProps)
-      : ownProps;
+            ? mergeProps(stateProps, dispatchProps, ownProps)
+            : ownProps;
         return {
             [config.name]: mergeFormProps(config)(formState, formDispatchers),
             ...userMergedProps,
@@ -61,40 +61,40 @@ export const createConnector = <S extends object>(config: CompleteConfig<S>) => 
     };
 
     return connect(
-    extendedMapState,
-    extendedMapDispatch,
-    extendedMergeProps,
-    options,
-  );
+        extendedMapState,
+        extendedMapDispatch,
+        extendedMergeProps,
+        options,
+    );
 };
 
 export const connectDirectly = <S extends object>(
-  config: CompleteConfig<S>,
-  options?: Options,
+    config: CompleteConfig<S>,
+    options?: Options,
 ) => {
     const mapState = createStateMapper(config);
     const mergeProps = (
-    stateProps: FormState<S>,
-    dispatchProps: object,
-    ownProps: object,
-  ) => {
+        stateProps: FormState<S>,
+        dispatchProps: object,
+        ownProps: object,
+    ) => {
         return {
             ...ownProps,
             [config.name]: mergeFormProps(config)(stateProps, dispatchProps),
         };
     };
     return options
-    ? connect<any, any>(
-        mapState,
-        mapDispatch(config),
-        mergeProps,
-        options,
-      )
-    : connect<any, any>(
-        mapState,
-        mapDispatch(config),
-        mergeProps,
-      );
+        ? connect<any, any>(
+              mapState,
+              mapDispatch(config),
+              mergeProps,
+              options,
+          )
+        : connect<any, any>(
+              mapState,
+              mapDispatch(config),
+              mergeProps,
+          );
 };
 
 export const localFormMap = (config: CompleteConfig) => (state, dispatch) => {
@@ -110,20 +110,19 @@ export const createStateMapper = (config: CompleteConfig) => {
         const formState = mapState(state);
         if (typeof formState === 'undefined') {
             throwError(
-        `'mapStateToProps' for form ${name} returned undefined. Make sure`,
-        `you add a selector function to the config object if you used`,
-        `'combineReducers' to add forms to your redux.`,
-      );
+                `'mapStateToProps' for form ${name} returned undefined. Make sure`,
+                `you add a selector function to the config object if you used`,
+                `'combineReducers' to add forms to your redux.`,
+            );
         }
         return formState;
     };
 };
 
 export const mapDispatch = <S extends object>(config: CompleteConfig<S>) => (
-  dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>,
 ) => {
     const thunks = new ThunkFactory(config).getThunks();
-    // thunks.updateField.bind(thunks);
     const {
         updateForm,
         clearForm,
@@ -145,7 +144,8 @@ export const mapDispatch = <S extends object>(config: CompleteConfig<S>) => (
         resetForm: () => dispatch(resetForm()),
         showFormErrors: (showErrors?: boolean) =>
             dispatch(showFormErrors(showErrors)),
-        updateField: (key: string, value: any) => dispatch(updateField(key, value)),
+        updateField: (key: string, value: any) =>
+            dispatch(updateField(key, value)),
         focusField: (key: string) => dispatch(focusField(key)),
         blurField: (key: string) => dispatch(blurField(key)),
         clearField: (key: string) => dispatch(clearField(key)),
@@ -154,33 +154,45 @@ export const mapDispatch = <S extends object>(config: CompleteConfig<S>) => (
         showFieldErrors: (key: string, showErrors?: boolean) =>
             dispatch(showFieldErrors(key, showErrors)),
         addArrayField: (key: string) => dispatch(addArrayField(key)),
-        deleteArrayField: (key: string, index: number) => dispatch(deleteArrayField(key, index)),
+        deleteArrayField: (key: string, index: number) =>
+            dispatch(deleteArrayField(key, index)),
     };
 };
 
 export const mergeFormProps = <S extends object>(config: CompleteConfig<S>) => (
-  state: FormState<S>,
-  dispatchers: object,
+    state: FormState<S>,
+    dispatchers: object,
 ): FormProps<S> => {
     const methods = createFormMethods(config)(state, dispatchers);
-    const props = createFormProps()(state);
-    const select = createSelect()(state, dispatchers);
+    const { fields, extra } = state;
+    const errors = Object.values(
+        extract(fields, 'errors', {
+            ignoreEmptyStrings: true,
+            flatten: true,
+        }),
+    ).filter(err => !Array.isArray(err));
+    const errorCount = errors.length;
+    const select = createSelect(config)(state, dispatchers);
     const values = extract(state.fields, 'value') as S;
     return {
+        name: config.name,
         ...methods,
-        ...props,
+        extra,
+        errors,
+        errorCount,
+        valid: !errorCount,
         select,
         values,
     };
 };
 
 const createFormMethods = <S extends object>(config: CompleteConfig<S>) => (
-  state: FormState<S>,
-  dispatchers: any,
+    state: FormState<S>,
+    dispatchers: any,
 ) => {
     const { updateForm, clearForm, resetForm, showFormErrors } = dispatchers;
     return {
-    // TODO: allow set to update other properties
+        // TODO: allow set to update other properties
         set: (value: Partial<S>) => updateForm(value),
         clear: () => clearForm(),
         reset: () => resetForm(),
@@ -192,7 +204,7 @@ const createFormMethods = <S extends object>(config: CompleteConfig<S>) => (
 };
 
 const createFormBinder = <S extends object>(
-  config: CompleteConfig<S>,
+    config: CompleteConfig<S>,
 ) => (): FormBindProps<S> => {
     return pick(config, [
         'action',
@@ -205,35 +217,29 @@ const createFormBinder = <S extends object>(
     ]) as FormBindProps<S>;
 };
 
-const createFormProps = () => (state: FormState) => {
-    const { fields, extra } = state;
-    const errors = Object.values(extract(fields, 'errors', { ignoreEmptyStrings: true, flatten: true }));
-    const errorCount = errors.length;
-    return {
-        extra,
-        errors,
-        errorCount,
-        valid: !errorCount,
-    };
-};
-
-const createSelect = <S extends object>() => (
-  state: FormState<S>,
-  dispatchers: any,
-  prefix?: string,
+const createSelect = <S extends object>(config: CompleteConfig) => (
+    state: FormState<S>,
+    dispatchers: any,
+    prefix?: string,
 ) => (keyStr: string) => {
-    const props = selectField(state, prefix ? `${prefix}.${keyStr}` : keyStr) as any;
+    const props = selectField(
+        state,
+        prefix ? `${prefix}.${keyStr}` : keyStr,
+    ) as any;
     if (!props) {
         throwError(
             `Key '${keyStr}' does not correspond to an existing node in the state.`,
             `Check spelling and/or that the parent key is included.`,
         );
     }
-    const methods = createFieldMethods(keyStr, props, dispatchers);
+    const methods = createFieldMethods(config)(keyStr, props, dispatchers);
     const { showErrors, extra, fields, fieldType } = props;
-    const errors = fieldType === FieldType.Simple
-        ? props.errors
-        : flatten(Object.values(extract(fields, 'errors', { flatten: true })));
+    const errors =
+        fieldType === FieldType.Simple
+            ? props.errors
+            : flatten(
+                  Object.values(extract(fields, 'errors', { flatten: true })),
+              );
     const errorCount = errors.length;
     const valid = !errorCount;
     const common = {
@@ -256,10 +262,11 @@ const createSelect = <S extends object>() => (
     return { ...common, errorMessage, options } as SimpleFieldProps;
 };
 
-const createFieldMethods = (
+const createFieldMethods = (config: CompleteConfig) => (
     key: string,
     props: FieldState,
-    dispatchers: any) => {
+    dispatchers: any,
+) => {
     const {
         updateField,
         clearField,
@@ -282,25 +289,26 @@ const createFieldMethods = (
         };
     }
     if (props.fieldType === FieldType.Simple) {
+        const { getter = v => v } = selectField(config, key, true) || {};
         return {
             ...common,
-            bind: createFieldBinder(key, props, dispatchers),
+            bind: createFieldBinder(key, props, dispatchers, getter),
         };
     }
     return common;
 };
 
 const createFieldBinder = (
-  key: string,
-  props: any,
-  dispatchers: any,
+    key: string,
+    props: any,
+    dispatchers: any,
+    getter: (value: any) => any,
 ) => (): FieldBindProps => {
     const { type, multiple } = props;
     const inputProps = pick(props, [
-        'value',
+        'type',
         'default',
         'id',
-        'type',
         'label',
         'placeholder',
         'name',
@@ -309,11 +317,13 @@ const createFieldBinder = (
         'multiple',
         'autoComplete',
     ]) as InputProps;
+    const fetchedValue = getter(props.value);
     const { updateField, focusField, blurField } = dispatchers;
-    return {
+    const bindProps = {
+        value: fetchedValue,
         ...inputProps,
         onChange: (e: SyntheticEvent<HTMLInputElement>, value?: InputValue) => {
-            if (value !== undefined) {
+            if (value !== undefined && value !== null) {
                 updateField(key, value);
             } else if (type === 'select' && multiple) {
                 const update = Array.from((e.target as any).options)
@@ -322,7 +332,8 @@ const createFieldBinder = (
                 updateField(key, update);
             } else {
                 const { currentTarget, target } = e;
-                const { checked, value: targetValue } = (currentTarget || target) as any;
+                const { checked, value: targetValue } = (currentTarget ||
+                    target) as any;
                 const setValue = type === 'checkbox' ? checked : targetValue;
                 updateField(key, setValue);
             }
@@ -330,12 +341,14 @@ const createFieldBinder = (
         onBlur: () => blurField(key),
         onFocus: () => focusField(key),
     };
+    return type === 'checkbox'
+        ? { ...bindProps, checked: !!fetchedValue }
+        : bindProps;
 };
 
 const mapOptions = (props: any, methods: any): undefined | MappedOption[] => {
     const { options, value, type } = props;
-    if (!options || !Array.isArray(options) || !options.length)
-        return [];
+    if (!options || !Array.isArray(options) || !options.length) return [];
 
     const { onChange } = methods.bind();
 

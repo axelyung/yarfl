@@ -64,6 +64,10 @@ export const createFieldReducer = <S extends object>(config: CompleteConfig<S>) 
 
 const parseValue = (config: CompleteConfig) => (state: FormState) => (key: string, value: InputValue) => {
     const typeOfValue = typeof value;
+    const { setter = false } = (selectField(config, key, true) || {});
+    if (setter) {
+        return setter(value);
+    }
     if (typeOfValue === 'number') {
         return value;
     }
@@ -139,14 +143,14 @@ export const createResetFieldReducer = () =>
     (state: FormState, action: ActionWithKey) => {
         const { key } = action;
         const dfault = (selectField(state, key) as any).default;
-        const errorsUpdated = setInWithKey(state, key, 'value', dfault);
+        const valueUpdated = setInWithKey(state, key, 'value', dfault);
         return key.includes('.')
-            ? mergeUp(errorsUpdated, key, {
+            ? mergeUp(valueUpdated, key, {
                 changed: false,
                 touched: false,
                 showErrors: false,
             })
-            : mergeIn(errorsUpdated, key, {
+            : mergeIn(valueUpdated, key, {
                 changed: false,
                 touched: false,
                 showErrors: false,

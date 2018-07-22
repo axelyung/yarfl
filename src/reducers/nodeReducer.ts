@@ -3,18 +3,18 @@ import types from '../actions/types';
 import { checkActionForKey, checkActionForObjectValue } from '../helpers/checkers';
 import { extract, setInWithPath } from '../helpers/utils';
 import {
-    createClearFieldReducer,
-    createResetFieldReducer,
-    createShowFieldErrorsReducer,
-    } from '../reducers/fieldReducer';
-import {
     ActionUnknown,
     ActionWithKey,
     CompleteConfig,
     FormState,
     ShowErrorsAction,
     } from '../typings';
-import { createValidateFieldReducer } from './fieldReducer';
+import {
+    createClearFieldReducer,
+    createResetFieldReducer,
+    createShowFieldErrorsReducer,
+    createValidateFieldReducer,
+    } from './fieldReducer';
 import { formUpdateReducer } from './formReducer';
 
 export const createNodeReducer = <S extends object>(config: CompleteConfig<S>) =>

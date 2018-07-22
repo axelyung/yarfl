@@ -1,5 +1,4 @@
-import { extract, flatten, parseKey, pick } from 'es/helpers/utils';
-
+import { extract, flatten, parseKey, pick } from 'src/helpers/utils';
 test('extract', () => {
     const input = {
         field1: {
@@ -39,7 +38,11 @@ test('flatten', () => {
         },
         field3: {
             field1: {
-                field1: [],
+                field1: [{
+                    arrField: 1,
+                }, {
+                    arrField: 2,
+                }],
                 field2: 5,
             },
         },
@@ -48,7 +51,8 @@ test('flatten', () => {
         field1: 1,
         'field2.field1': [],
         'field2.field2': '3',
-        'field3.field1.field1': [],
+        'field3.field1.field1[0].arrField': 1,
+        'field3.field1.field1[1].arrField': 2,
         'field3.field1.field2': 5,
     });
 });
