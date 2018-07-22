@@ -4,32 +4,25 @@
 
 ##### Manage form state in React/Redux applications with automatic validation. Heavily inspired by [MobX React Form](https://github.com/foxhound87/mobx-react-form)
 
-[//]: [![NPM](https://nodei.co/npm/yarfl.png)](https://nodei.co/npm/yarfl/)
-
 ## Warning: experimental, not ready for production
 
 ## Features
 
-- Easy field/validation customization.
-- Serializable configuration.
-- Array fields.
-- Nested fields.
+- Easy and serializable configuration.
 - Automatic reactive validation with error messages.
 - Supports both sync and async validation.
+- Array fields.
+- Nested fields.
 - Easily integrated with component libraries (Material Ui, React Widgets, React Select, etc).
 - Adheres to functional and immutable design principles.
 
-## Why?
-
-(todo)
-
 ## Quick start
 
-See the [getting started]() section of the documentation.
+See the [getting started](https://axelyung.github.io/yarfl/docs/getting-started.html) section of the documentation.
 
 ## Documentation
 
-(todo)
+See the complete documentation [here](https://axelyung.github.io/yarfl)
 
 ## Demo
 
