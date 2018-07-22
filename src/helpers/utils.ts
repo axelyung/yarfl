@@ -1,4 +1,23 @@
-import * as R from 'ramda';
+import * as _append from 'ramda/src/append';
+import * as _assocPath from 'ramda/src/assocPath';
+import * as _merge from 'ramda/src/merge';
+import * as _mergeDeepRight from 'ramda/src/mergeDeepRight';
+import * as _omit from 'ramda/src/omit';
+import * as _path from 'ramda/src/path';
+import * as _pick from 'ramda/src/pick';
+import * as _remove from 'ramda/src/remove';
+
+const R = {
+    assocPath: _assocPath,
+    merge: _merge,
+    mergeDeepRight: _mergeDeepRight,
+    omit: _omit,
+    pick: _pick,
+    remove: _remove,
+    append: _append,
+    path: _path,
+};
+
 import {
     ArrayFieldState,
     CompleteConfig,
@@ -13,11 +32,10 @@ import { checkPath } from './checkers';
 
 export const firstDefined = (...args: any[]) => {
     for (const i in args) {
-        if (typeof args[i] !== 'undefined') {
+        if (typeof args[i] !== 'undefined' && args[i] !== null) {
             return args[i];
         }
     }
-    return undefined;
 };
 
 const caseFnWrapper = (fn: (str: string) => string) => (str: string) => {
@@ -100,10 +118,10 @@ export const mergeUp = <T extends object>(state: T, key: string, value: object) 
     return updated;
 };
 
-export const selectField = <T extends FormState | CompleteConfig>(target: T, key: string) => {
+export const selectField = <T extends FormState | CompleteConfig>(target: T, key: string, graceful = false) => {
     const path = ['fields', ...parseKey(key)];
     const field = getIn(target, path);
-    if (typeof field === 'undefined') {
+    if (typeof field === 'undefined' && !graceful) {
         checkPath(path, target, key);
     }
     return field as any;
@@ -141,11 +159,11 @@ export const extract = <S extends object>(fields: Model<S, FieldState>, key: key
 };
 
 export const throwError = (...errorMessage: string[]) => {
-    throw new Error(`REDUX VALIDATED: ${errorMessage.join(' ')}`);
+    throw new Error(`YARFL: ${errorMessage.join(' ')}`);
 };
 
 export const logError = (...errorMessage: string[]) => {
-    console.error(`REDUX VALIDATED: ${errorMessage.join(' ')}`);
+    console.error(`YARFL: ${errorMessage.join(' ')}`);
 };
 
 export const flatten = (target: object| any[]) =>

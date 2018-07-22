@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux';
+import { selectField } from '../helpers/utils';
 import { asyncValidatorFactory, validatorFactory } from '../helpers/validator';
-import { Action, ActionCreators, ActionUnknown, CompleteConfig, FormState, InputValue, StateWithForms } from '../typings';
+import { Action, ActionCreators, ActionUnknown, CompleteConfig, FormState, InputValue } from '../typings';
 import creatorFactory from './creatorFactory';
 import types from './types';
 
@@ -105,44 +106,26 @@ export default class ThunkFactory {
             const formState = this.selector(getState);
             if (formState.isAsync) {
                 return this.createValidatorAsync(formState)
-                    .then(validator => dispatch(this.creators.validateField(key, validator)));
+                .then(validator => dispatch(this.creators.validateField(key, validator)));
             }
-            return dispatch(this.creators.validateField(key, this.createValidator(formState)));
+            dispatch(this.creators.validateField(key, this.createValidator(formState)));
         }
 
     private postAction = (action: ActionUnknown) =>
-        (dispatch: Dispatch, getState: () => StateWithForms): void | Promise<void> => {
+        (dispatch: Dispatch): void | Promise<void> => {
             const { key } = action;
-            const formState = this.selector(getState);
-            if (formState.isAsync && this.shouldValidate(action)) {
-                return this.createValidatorAsync(formState).then(validator => {
-                    if (key) {
-                        dispatch(this.creators.validateField(key, validator));
-                        if (this.shouldShowErrors(action)) {
-                            dispatch(this.creators.showFieldErrors(key, true));
-                        }
-                    } else {
-                        dispatch(this.creators.validateForm(validator));
-                        if (this.shouldShowErrors(action)) {
-                            dispatch(this.creators.showFormErrors(true));
-                        }
-                    }
-                });
-            }
-            if (key) {
-                if (this.shouldValidate(action)) {
-                    dispatch(this.validateField(key) as any);
-                }
-                if (this.shouldShowErrors(action)) {
+            if (this.shouldShowErrors(action)) {
+                if (key) {
                     dispatch(this.creators.showFieldErrors(key, true));
-                }
-            } else {
-                if (this.shouldValidate(action)) {
-                    dispatch(this.validateForm() as any);
-                }
-                if (this.shouldShowErrors(action)) {
+                } else {
                     dispatch(this.creators.showFormErrors(true));
                 }
+            }
+            if (this.shouldValidate(action)) {
+                if (key) {
+                    return dispatch(this.validateField(key) as any);
+                }
+                return dispatch(this.validateForm() as any);
             }
         }
 
@@ -237,10 +220,13 @@ export default class ThunkFactory {
                 return dispatch(this.validateField(key));
             }
         },
-        addArrayField: (key: string) => (dispatch) => {
+        addArrayField: (key: string) => (dispatch, getState) => {
             const action = this.creators.addArrayField(key);
             dispatch(action);
-            return dispatch(this.postAction(action));
+            const newField = selectField(this.selector(getState), key);
+            const index = newField.fields.length - 1;
+            const keys = Object.keys(newField.fields[index]).map(fieldKey => `${key}[${index}].${fieldKey}`);
+            return Promise.all(keys.map(k => dispatch(this.postAction(this.creators.addArrayField(k)))));
         },
         deleteArrayField: (key: string, index: number) => (dispatch) => {
             const action = this.creators.deleteArrayField(key, index);

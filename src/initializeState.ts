@@ -2,7 +2,6 @@ import creatorFactory from './actions/creatorFactory';
 import {
     camelCase,
     firstDefined,
-    isNonEmptyArray,
     kebabCase,
     titleCase,
 } from './helpers/utils';
@@ -104,17 +103,17 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
     const placeholder = firstDefined(field.placeholder, label);
     const disabled = firstDefined(!!field.disabled, false);
     const autoFocus = firstDefined(!!field.autoFocus, false);
-    const multiple = isNonEmptyArray(field.options) && !!field.multiple;
+    const multiple = field.multiple;
     const value = firstDefined(field.value, field.default, multiple ? [] : '');
     const dfault = firstDefined(field.default, multiple ? [] : '');
     const type = firstDefined(field.type, inputType(value));
-    const options = field.options && isNonEmptyArray(field.options)
+    const options = field.options
         ? optionMapper(field.options, id, name, key, type)
         : undefined;
     const props = {
         ...common,
         fieldType: FieldType.Simple,
-        value,
+        value: type === 'checkbox' ? !!value : value,
         default: dfault,
         initial: value,
         rules,
@@ -132,6 +131,9 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
 };
 
 const optionMapper = (options: string[] | Option[], id: string, name: string, key: string, type: string): MappedOption[] => {
+    if (!options.length) {
+        return [];
+    }
     const optionType = typeof options[0];
     if (optionType !== 'object' && optionType !== 'string')
         throw new Error(`'options' for field '${key}' must be defined as an array of strings or objects ({ value, label })`);

@@ -3,12 +3,6 @@ import types from '../actions/types';
 import { checkActionForObjectValue } from '../helpers/checkers';
 import { extract } from '../helpers/utils';
 import {
-    createClearFieldReducer,
-    createResetFieldReducer,
-    createShowFieldErrorsReducer,
-    createUpdateFieldReducer,
-    } from '../reducers/fieldReducer';
-import {
     ActionUnknown,
     ActionWithKeyAndValue,
     CompleteConfig,
@@ -17,7 +11,13 @@ import {
     ShowErrorsAction,
     ValidateAction,
     } from '../typings';
-import { createValidateFieldReducer } from './fieldReducer';
+import {
+    createClearFieldReducer,
+    createResetFieldReducer,
+    createShowFieldErrorsReducer,
+    createUpdateFieldReducer,
+    createValidateFieldReducer,
+    } from './fieldReducer';
 
 export const createFormReducer = <S extends object>(config: CompleteConfig<S>) =>
     (state: FormState, action: ActionUnknown) => {

@@ -1,6 +1,6 @@
 import * as Validator from 'validatorjs';
-import { extract, titleCase } from '../helpers/utils';
 import { CompleteConfig, CustomRule, FormState } from '../typings';
+import { extract, titleCase } from './utils';
 
 const common = <S extends object>(config: CompleteConfig<S>) => (state: FormState<S>) => {
     const { errorMessages, attributeFormatter } = config;

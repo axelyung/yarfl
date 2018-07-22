@@ -1,5 +1,4 @@
-import * as R from 'ramda';
-import { throwError } from '../helpers/utils';
+import * as _path from 'ramda/src/path';
 import {
     ActionUnknown,
     ActionWithKey,
@@ -13,6 +12,7 @@ import {
     ParentFieldState,
     SimpleFieldState,
 } from '../typings';
+import { throwError } from './utils';
 
 export const checkConfigs = (configs: Config[]) => {
     const checkedConfigs = configs.map(checkConfig);
@@ -121,7 +121,7 @@ export const checkFieldType = (field: FieldState): FieldState => {
 };
 
 export const checkPath = (path: string[], target: object | any[], strFormat?: string) => {
-    if (typeof R.path(path, target) === 'undefined') {
+    if (typeof _path(path, target) === 'undefined') {
         throwError(
             `The given key '${strFormat || path.join('.')}' does not correspond`,
             `to a defined part of the state tree. Please check that the key is valid`,
