@@ -1,11 +1,16 @@
-import { FieldProps, FormProps } from 'es/types';
 import * as R from 'ramda';
 import { Action, applyMiddleware, createStore, Store } from 'redux';
 import thunk from 'redux-thunk';
 import { init } from 'src';
-import { Config } from 'src/types';
+import { Config, FieldProps, FormProps } from 'src/typings';
 
-export const getIn = <T>(obj: object | any[], path: (string|number)[]) => R.path<T>(path, obj);
+// tslint:disable:no-console
+export const getIn = <T>(obj: object | any[], path: string | (string|number)[]) => {
+    const fieldPath = typeof path === 'string'
+        ? parseKey(path)
+        : path;
+    return R.path<T>(fieldPath, obj);
+};
 
 const regex = /\[\d+\]/;
 
@@ -26,17 +31,28 @@ const parseKey = (key: string) => {
     return [key];
 };
 
-export const mergeIn = <T extends object>(state: T, key: string, value: object): T => {
-    const fieldPath = parseKey(key);
+export const mergeIn = <T extends object>(state: T, path: string | (string|number)[], value: object): T => {
+    const fieldPath = typeof path === 'string'
+        ? parseKey(path)
+        : path;
     const target = getIn(state, fieldPath);
     const merged = R.merge(target, value);
     return R.assocPath(fieldPath, merged, state);
 };
 
+export const setIn = <T extends object>(state: T, path: string | (string|number)[], value: any): T => {
+    const fieldPath = typeof path === 'string'
+        ? parseKey(path)
+        : path;
+    return R.assocPath(fieldPath, value, state);
+};
+
 export const mergeDeep = R.mergeDeepRight;
 
-export const mergeDeepIn = <T extends object>(state: T, key: string, value: object) => {
-    const fieldPath = parseKey(key);
+export const mergeDeepIn = <T extends object>(state: T, path: string | (string|number)[], value: object) => {
+    const fieldPath = typeof path === 'string'
+        ? parseKey(path)
+        : path;
     const target = getIn(state, fieldPath);
     const merged = mergeDeep(target, value);
     return R.assocPath(fieldPath, merged, state);
@@ -63,19 +79,20 @@ export const expectBoolean = (target: any) => expectType(target, 'boolean');
 
 export const expectArray = (target: any) => expect(Array.isArray(target)).toBe(true);
 
-export const expectToThrow = (fn: () => any) => expect(fn).toThrow(/^REDUX VALIDATED: /);
+export const expectToThrow = (fn: () => any) => expect(fn).toThrow(/^YARFL: /);
 
-export const evaluateAction = (store: Store) => (action: Action, expected: object) => {
-    store.dispatch(action);
-    const reduction = store.getState();
-    expect(reduction).toEqual(expected);
-};
-
-export const evaluateActionAsync = (store: Store) => async (action: Action, expected: object) => {
+export const evaluateActions = (store: Store) => async (actions: Action | Action[], expected: object) => {
     expect.assertions(1);
-    await store.dispatch(action);
+    if (Array.isArray(actions)) {
+        for (const a of actions) {
+            await store.dispatch(a);
+        }
+    } else {
+        await store.dispatch(actions);
+    }
     const reduction = store.getState();
     expect(reduction).toEqual(expected);
+    return reduction;
 };
 
 export const printObj = (obj: object) => console.log(JSON.stringify(obj, null, 4));
@@ -95,17 +112,17 @@ export const timer = (fn: () => any, name?: string) => {
     return result;
 };
 
-export const createTestStore = (config: Config) => {
+export const createTestAssets = (config: Config) => {
     const initResult = init(config);
     const store = createStore(initResult.reducer, initResult.initialState, applyMiddleware(thunk));
-    return { store, initResult };
+    return { store, ...initResult };
 };
 
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const checkFormProps = (props: FormProps<any>) => {
     const size = Object.keys(props).length;
-    expect(size).toBe(11);
+    expect(size > 10).toBe(true);
     expect(props).toBeDefined();
     const {
         set,
@@ -128,6 +145,7 @@ export const checkFormProps = (props: FormProps<any>) => {
 };
 
 export const checkFieldProps = (props: FieldProps) => {
+    expect(props).toBeDefined();
     const size = Object.keys(props).length;
     expect(size > 8).toBe(true);
     expect(props).toBeDefined();

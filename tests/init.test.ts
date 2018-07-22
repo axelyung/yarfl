@@ -1,17 +1,19 @@
-import { init } from 'es';
-import { Action } from 'es/types';
 import { combineReducers, createStore } from 'redux';
+import { init } from 'src';
+import { Action } from 'src/typings';
 import {
     arrayConfig,
     arrayState,
     asyncConfig,
     asyncState,
+    hybridConfig,
+    hybridState,
     nestedConfig,
     nestedState,
     shallowConfig,
     shallowState,
-    } from 'tests/configs';
-import { expectFunction, expectObject, timer } from 'tests/utils';
+    } from './configs';
+import { expectFunction, expectObject, timer } from './helpers/utils';
 
 const testObjects = [{
     config: shallowConfig,
@@ -25,6 +27,9 @@ const testObjects = [{
 }, {
     config: asyncConfig,
     state: asyncState,
+}, {
+    config: hybridConfig,
+    state: hybridState,
 }];
 
 timer(() => {
@@ -81,9 +86,9 @@ timer(() => {
     });
 
     test('require unique form name(s)', () => {
-        expect(() => init({} as any)).toThrow(/^REDUX VALIDATED: /);
-        expect(() => init(shallowConfig, {} as any)).toThrow(/^REDUX VALIDATED: /);
-        expect(() => init(shallowConfig, shallowConfig)).toThrow(/^REDUX VALIDATED: /);
+        expect(() => init({} as any)).toThrow(/^YARFL: /);
+        expect(() => init(shallowConfig, {} as any)).toThrow(/^YARFL: /);
+        expect(() => init(shallowConfig, shallowConfig)).toThrow(/^YARFL: /);
     });
 
     test('store creation with multiple config', () => {

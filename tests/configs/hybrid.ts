@@ -1,7 +1,4 @@
-import {
-    Config,
-    // StateWithForms,
-    } from 'src/types';
+import { Config } from 'src/typings';
 
 type ConfigType = {
     basicField: string,
@@ -18,6 +15,7 @@ type ConfigType = {
             arrayField1: {
                 value: 'value',
                 default: 'default',
+
             },
             arrayField2: {
                 type: 'number',
@@ -27,8 +25,8 @@ type ConfigType = {
     },
 };
 
-export const config: Config<ConfigType> = {
-    name: 'myForm',
+export const hybridConfig: Config<ConfigType> = {
+    name: 'hybridForm',
     action: 'http://api.com/endpoint',
     customRules: [{
         name: 'password',
@@ -41,8 +39,8 @@ export const config: Config<ConfigType> = {
     fields: {
         basicField: {
             value: '',
-            default: 'default value',
-            rules: 'required|password',
+            default: 'default',
+            rules: 'required',
             id: 'field_1',
             type: 'text',
             label: 'Field 1',
@@ -71,45 +69,50 @@ export const config: Config<ConfigType> = {
             multiple: true,
             fields: {
                 arrayField1: {
-                    value: 'value',
+                    value: '',
                     default: 'default',
+                    rules: 'required',
                 },
                 arrayField2: {
                     type: 'number',
-                    value: 18,
+                    value: 10,
+                    rules: 'required|min:18',
                 },
             },
         },
     },
 };
 
-export const asyncConfig: Config<ConfigType> = {
-    ...config,
+export const asyncHybridConfig: Config<ConfigType> = {
+    ...hybridConfig,
+    name: 'asyncHybridForm',
     customRules: [
-        ...(config.customRules || []),
+        ...(hybridConfig.customRules || []),
         {
             name: 'userName',
             message: `Username cannot be 'username'!`,
             // tslint:disable-next-line:variable-name
             callback: (value: any, _req: any, _attr: string, passes) => {
-                setTimeout(() => value !== 'username' ? passes()
-                : passes(false), 500);
+                setTimeout(() => {
+                    value !== 'username' ? passes()
+                    : passes(false);
+                }, 500);
             },
         },
     ],
     fields: {
-        ...config.fields,
+        ...hybridConfig.fields,
         basicField: {
-            ...config.fields.basicField,
-            rules: 'required|password|userName',
+            ...hybridConfig.fields.basicField,
+            rules: 'required|userName',
         },
     },
 };
 
-export const state =  {
-    myForm: {
+export const hybridState =  {
+    hybridForm: {
         action: 'http://api.com/endpoint',
-        name: 'myForm',
+        name: 'hybridForm',
         method: 'POST',
         fields: {
             basicField: {
@@ -118,11 +121,12 @@ export const state =  {
                 touched: false,
                 changed: false,
                 showErrors: false,
+                extra: {},
                 fieldType: 'SIMPLE',
                 value: '',
-                default: 'default value',
+                default: 'default',
                 initial: '',
-                rules: 'required|password',
+                rules: 'required',
                 name: 'basicField',
                 id: 'field_1',
                 type: 'text',
@@ -131,7 +135,9 @@ export const state =  {
                 disabled: false,
                 autoFocus: false,
                 autoComplete: 'basicField',
-                errors: [],
+                errors: [
+                    'The basic field field is required.',
+                ],
             },
             parent: {
                 key: 'parent',
@@ -139,6 +145,7 @@ export const state =  {
                 touched: false,
                 changed: false,
                 showErrors: false,
+                extra: {},
                 fields: {
                     child1: {
                         key: 'child1',
@@ -146,6 +153,7 @@ export const state =  {
                         touched: false,
                         changed: false,
                         showErrors: false,
+                        extra: {},
                         fieldType: 'SIMPLE',
                         value: '',
                         default: '',
@@ -159,7 +167,9 @@ export const state =  {
                         disabled: false,
                         autoFocus: false,
                         autoComplete: 'child1',
-                        errors: [],
+                        errors: [
+                            'The child 1 field is required.',
+                        ],
                     },
                     child2: {
                         key: 'child2',
@@ -167,6 +177,7 @@ export const state =  {
                         touched: false,
                         changed: false,
                         showErrors: false,
+                        extra: {},
                         fields: {
                             grandchild1: {
                                 key: 'grandchild1',
@@ -174,6 +185,7 @@ export const state =  {
                                 touched: false,
                                 changed: false,
                                 showErrors: false,
+                                extra: {},
                                 fieldType: 'SIMPLE',
                                 value: 'default',
                                 default: 'default',
@@ -187,7 +199,9 @@ export const state =  {
                                 disabled: false,
                                 autoFocus: false,
                                 autoComplete: 'grandchild1',
-                                errors: [],
+                                errors: [
+                                    'The grandchild 1 format is invalid.',
+                                ],
                             },
                             grandchild2: {
                                 key: 'grandchild2',
@@ -195,6 +209,7 @@ export const state =  {
                                 touched: false,
                                 changed: false,
                                 showErrors: false,
+                                extra: {},
                                 fieldType: 'SIMPLE',
                                 value: '',
                                 default: '',
@@ -222,6 +237,7 @@ export const state =  {
                 touched: false,
                 changed: false,
                 showErrors: false,
+                extra: {},
                 fieldType: 'ARRAY',
                 default: {
                     arrayField1: {
@@ -230,13 +246,14 @@ export const state =  {
                         touched: false,
                         changed: false,
                         showErrors: false,
+                        extra: {},
                         fieldType: 'SIMPLE',
-                        value: 'value',
-                        default: 'default value',
-                        initial: 'value',
-                        rules: '',
+                        value: '',
+                        default: 'default',
+                        initial: '',
                         name: 'arrayField1',
                         id: 'array-field-1',
+                        rules: 'required',
                         type: 'text',
                         label: 'Array Field 1',
                         placeholder: 'Array Field 1',
@@ -251,11 +268,12 @@ export const state =  {
                         touched: false,
                         changed: false,
                         showErrors: false,
+                        extra: {},
                         fieldType: 'SIMPLE',
-                        value: 18,
+                        rules: 'required|min:18',
+                        value: 10,
                         default: '',
-                        initial: 18,
-                        rules: '',
+                        initial: 10,
                         name: 'arrayField2',
                         id: 'array-field-2',
                         type: 'number',
@@ -275,11 +293,12 @@ export const state =  {
                             touched: false,
                             changed: false,
                             showErrors: false,
+                            extra: {},
                             fieldType: 'SIMPLE',
-                            value: 'value',
-                            default: 'default value',
-                            initial: 'value',
-                            rules: '',
+                            value: '',
+                            default: 'default',
+                            initial: '',
+                            rules: 'required',
                             name: 'arrayField[][arrayField1]',
                             id: 'array-field-1-0',
                             type: 'text',
@@ -288,7 +307,9 @@ export const state =  {
                             disabled: false,
                             autoFocus: false,
                             autoComplete: 'arrayField1',
-                            errors: [],
+                            errors: [
+                                'The array field 1 field is required.',
+                            ],
                         },
                         arrayField2: {
                             key: 'arrayField2[0]',
@@ -296,11 +317,12 @@ export const state =  {
                             touched: false,
                             changed: false,
                             showErrors: false,
+                            extra: {},
                             fieldType: 'SIMPLE',
-                            value: 18,
+                            value: 10,
                             default: '',
-                            initial: 18,
-                            rules: '',
+                            initial: 10,
+                            rules: 'required|min:18',
                             name: 'arrayField[][arrayField2]',
                             id: 'array-field-2-0',
                             type: 'number',
@@ -309,26 +331,15 @@ export const state =  {
                             disabled: false,
                             autoFocus: false,
                             autoComplete: 'arrayField2',
-                            errors: [],
+                            errors: [
+                                'The array field 2 must be at least 18.',
+                            ],
                         },
                     },
                 ],
             },
         },
         isAsync: false,
-    },
-};
-
-export const asyncState = {
-    myForm:{
-        ...state.myForm,
-        isAsync: true,
-        fields: {
-            ...state.myForm.fields,
-            basicField: {
-                ...state.myForm.fields.basicField,
-                rules: 'required|password|userName',
-            },
-        },
+        extra: {},
     },
 };
