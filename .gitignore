@@ -48,8 +48,13 @@ build/config/buildinfo.properties
 /inc/.DS_Store
 tsconfig.service.json
 coverage
+.rpt2_cache
+*.html
+.size-snapshot.json
+_book
 
 # include in npm
 dist
 lib
 es
+typings
