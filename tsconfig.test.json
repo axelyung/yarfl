@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+      "strict": false,
+      "allowJs": true,
+      "module": "commonjs",
+  },
+  "include": ["src", "tests"]
+
+}
