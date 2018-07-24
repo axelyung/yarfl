@@ -2,7 +2,7 @@
 
 ### Basics
 
-Every form is defined by a `Config` object. The only required properties are `name` and `fields`. The `name` identifies how the form will be exposed when connecting to components later on and `fields` are the input fields that make up the form.
+Every form is defined by a [`Config`](../api/Config.md) object. The only required properties are `name` and `fields`. The `name` identifies how the form will be exposed when connecting to components later on and `fields` are the input fields that make up the form.
 
 ```javascript
 export const loginFormConfig = {
@@ -13,16 +13,20 @@ export const loginFormConfig = {
         },
         password: {
             rules: 'required'
-        }
+        },
+        // fields can be initialized with an empty
+        // object if they don't need validation and
+        // can be set to defaults
+        optional: {}
     }
 }
 ```
 
-See the api reference for a complete documentation of available form and field configuration options.
+See the api reference for a complete documentation of available [form](../api/Config.md) and [field](../api/FieldConfig.md) configuration options.
 
 ### Nested fields
 
-Sometimes it might be necessary to divide up a form into different sections or across pages. In these cases we can create nested fields. Instead of defining field options on the top layer of the `fields` tree we define "parent" fields with their own `fields` property. There is no limit as to how deep nested fields can be defined.
+Sometimes it might be necessary to divide up a form into [different sections](https://axelyung.github.io/yarfl-examples/#/partitioned) or [across pages](https://axelyung.github.io/yarfl-examples/#/wizard/personal-info). In these cases we can create nested fields. Instead of defining field options on the top layer of the `fields` tree we define "parent" fields with their own `fields` property. There is no limit as to how deep nested fields can be defined.
 
 ```javascript
 export const newUserFormConfig = {
@@ -55,7 +59,7 @@ export const newUserFormConfig = {
 
 ### Array fields
 
-Array fields allow the user to dynamically add new groups of fields in a form. For example, we might want to create several new users at once. To define an array field define a "parent" field but add `multiple: true`.
+Array fields allow the user to [dynamically add new groups of fields](https://axelyung.github.io/yarfl-examples/#/array-fields) in a form. For example, we might want to create several new users at once. To define an array field define a "parent" field as in nested fields, but add `multiple: true`.
 
 ```javascript
 export const newUsersFormConfig = {
@@ -79,7 +83,7 @@ export const newUsersFormConfig = {
 
 ### Custom rules
 
-Custom rules are registered on the `customRules` property of a `Config` object. Each rule must contain a `name`, `callback` and `message` property. The `callback` function follows the [`validatorjs` signature](https://github.com/skaterdav85/validatorjs#register-custom-validation-rules)
+Custom rules are registered on the `customRules` property of a `Config` object. Each rule must contain a `name`, `callback` and `message` property. The `callback` function follows the [`validatorjs` signature](https://github.com/skaterdav85/validatorjs#register-custom-validation-rules).
 
 ```javascript
 export const newUserFormConfig = {
@@ -88,21 +92,23 @@ export const newUserFormConfig = {
         ...
         password: {
             type: 'password',
-            rules: 'required|pwCheck',
+            rules: 'required|not:password',
         },
         ...
     },
     customRules: [{
-        name: 'pwCheck',
-        callback: value => value.toString().toLowerCase() === 'password',
-        message: "The password cannot be \"password\"",
+        name: 'not',
+        callback: (value, requirement) => {
+            value.toString().toLowerCase() === requirement.toString.toLowerCase(),
+        },
+        message: "The :attribute cannot be \"password\"",
     }],
 };
 ```
 
 ### Async validation
 
-Asynchronous validation rules are registered in the same way but the callback has
+Asynchronous validation rules are registered in the same way but the validation function has a length of four where the last argument (`passes`) is a called when the validation has completed. See an example [here](https://axelyung.github.io/yarfl-examples/#/async).
 
 ```javascript
 export const newUserFormConfig = {
@@ -136,4 +142,24 @@ export const newUserFormConfig = {
 
 ### Getters/setters
 
-(todo)
+In some cases it might be helpful to have a way of [transforming the field's value](https://axelyung.github.io/yarfl-examples/#/getters-setters) between reading from and writing to the store. Each field can be configured with optional `getter` and `setter` properties to achieve just that.
+
+In the following example the user writes/reads a base 10 number, but a binary string value is persisted to the store. When reading from the store, this binary string is converted back into a base 10 number.
+
+```javascript
+export const newUserFormConfig = {
+    name: 'newUserForm',
+    fields: {
+        ...
+        age: {
+            ...
+            setter: value => parseInt(value).toString(2),
+            getter: (value) => {
+                const result = parseInt(value, 2);
+                return Number.isNaN(result) ? '' : result;
+            },
+        },
+        ...
+    },
+};
+```

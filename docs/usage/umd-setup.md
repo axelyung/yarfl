@@ -12,7 +12,7 @@ The library is accessible via a `Yarfl` global when distributed in UMD format.
         <script src="https://unpkg.com/redux-thunk/dist/redux-thunk.js"></script>
         <!-- minified version available at https://unpkg.com/yarfl/dist/yarfl.min.js -->
         <script src="https://unpkg.com/yarfl/dist/yarfl.js"></script>
-        
+
         <title>Yarfl with UMD setup</title>
     </head>
     <body>
@@ -21,14 +21,14 @@ The library is accessible via a `Yarfl` global when distributed in UMD format.
         var config = {
             ...
         }
-        
+
         var initResult = Yarfl.init(config);
         var reducer = initResult.reducer;
         var initialState = initResult.initialState;
-        
-        var middleware = Redux.applyMiddleware(ReduxThunk.default);
 
-        var store = Redux.createStore(reducer, initialState, middleware);
+        var enhancer = Redux.applyMiddleware(ReduxThunk.default);
+
+        var store = Redux.createStore(reducer, initialState, enhancer);
         ...
     </script>
 ```

@@ -27,9 +27,9 @@
   "keywords": [
     "react",
     "redux",
-    "forms",
-    "async",
+    "form",
     "validation",
+    "async",
     "immutable"
   ],
   "scripts": {
@@ -48,7 +48,7 @@
     "build:umd-min": "cross-env NODE_ENV=production rollup -c",
     "build:docs": "gitbook build",
     "build": "run-s clean build:*",
-    "publish:docs": "gh-pages -d _book"
+    "publish:docs": "yarn build:docs && gh-pages -d _book"
   },
   "peerDependencies": {
     "react": "^16.4.1",
@@ -80,6 +80,7 @@
     "gh-pages": "^1.2.0",
     "gitbook-cli": "^2.3.2",
     "gitbook-plugin-advanced-emoji": "^0.2.2",
+    "gitbook-plugin-insert-logo-link": "^1.0.1",
     "jest": "^23.2.0",
     "lodash": "^4.17.10",
     "module-details-from-path": "^1.0.3",

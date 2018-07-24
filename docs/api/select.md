@@ -14,15 +14,15 @@ An object with all the fields properties (extends `ConfigField`). plus the follo
 
 | Property     |    Type    | Description                                                                                                                                              |
 |--------------|:----------:|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| valid        |  `boolean` | Whether the field passes all validation rules.                                                                                                           |
-| errors       |   `array`  | An array of all the error messages for the field if failing validation.                                                                                  |
-| errorCount   |  `number`  | The total number of validation errors (equal to the length of `errors`).                                                                                 |
-| errorMessage |  'string'  | The first error in `errors` if `showErrors = true`.                                                                                                      |
-| set          | `function` | Sets the field's value.                                                                                                                                  |
-| clear        | `function` | Clears the field's value.                                                                                                                                |
-| reset        | `function` | Resets the field's value to `default`. If no `default` was given the field is set to its initial value.                                                  |
-| showErrors   | `function` | Sets `showErrors = true` for the field.                                                                                                                  |
-| bind         | `function` | "Binds" the field to an HTML input component with properties corresponding to HTML attributes and event handlers for `onChange`, `onFocus` and `onBlur`. |
+| `valid`        |  `boolean` | Whether the field passes all validation rules.                                                                                                           |
+| `errors`       |   `array`  | An array of all the error messages for the field if failing validation.                                                                                  |
+| `errorCount`   |  `number`  | The total number of validation errors (equal to the length of `errors`).                                                                                 |
+| `errorMessage` |  'string'  | The first error in `errors` if `showErrors = true`.                                                                                                      |
+| `set`          | `function` | Sets the field's value, for example `set('John Doe')`.                                                                                                                                  |
+| `clear`        | `function` | Clears the field's value.                                                                                                                                |
+| `reset`        | `function` | Resets the field's value to `default`. If no `default` was given the field is set to its initial value.                                                  |
+| `showErrors`   | `function` | Sets `showErrors = true` for the field, or `showErrors(false)` will set `showErrors = false`                                                                                                                 |
+| `bind`         | `function` | "Binds" the field to an HTML input component with properties corresponding to HTML attributes and event handlers for `onChange`, `onFocus` and `onBlur`. |
 
 ### Example
 

@@ -1,5 +1,15 @@
 {
+    "title": "Yarfl",
+    "author": "Axel Yung",
+    "description": "Yet Another Redux Forms Library",
+    "root": "./docs",
     "plugins": [
-        "advanced-emoji"
-    ]
+        "advanced-emoji",
+        "insert-logo-link"
+    ],
+    "pluginsConfig": {
+        "insert-logo-link": {
+            "src": "./logo.svg"
+        }
+    }
 }
