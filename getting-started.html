@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Introduction · Yarfl</title>
+        <title>Getting started · Yarfl</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -65,8 +65,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="getting-started.html" />
+    <link rel="next" href="faq.html" />
     
+    
+    <link rel="prev" href="./" />
     
 
     </head>
@@ -95,7 +97,7 @@
         
         
     
-        <li class="chapter active" data-level="1.1" data-path="./">
+        <li class="chapter " data-level="1.1" data-path="./">
             
                 <a href="./">
             
@@ -108,7 +110,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2" data-path="getting-started.html">
+        <li class="chapter active" data-level="1.2" data-path="getting-started.html">
             
                 <a href="getting-started.html">
             
@@ -514,7 +516,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >Introduction</a>
+        <a href="." >Getting started</a>
     </h1>
 </div>
 
@@ -529,34 +531,168 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="yarfl">YARFL</h1>
-<h5 id="yet-another-redux-forms-library">Yet Another Redux Forms Library</h5>
-<h5 id="manage-form-state-in-reactredux-applications-with-reactive-updates-and-field-level-validation-heavily-inspired-by-mobx-react-form">Manage form state in React/Redux applications with reactive updates and field level validation. Heavily inspired by <a href="https://github.com/foxhound87/mobx-react-form" target="_blank">MobX React Form</a></h5>
-<p><a href=""><img src="https://img.shields.io/npm/v/yarfl.svg" alt="npm"></a>
-<a href=""><img src="https://img.shields.io/node/v/yarfl.svg" alt="node"></a>
-<a href=""><img src="https://img.shields.io/github/license/axelyung/yarfl.svg" alt="GitHub license"></a>
-<a href=""><img src="https://img.shields.io/npm/dt/yarfl.svg" alt="Downloads"></a>
-<a href=""><img src="https://img.shields.io/npm/dm/yarfl.svg" alt="Downloads"></a></p>
-<p><a href="https://nodei.co/npm/yarfl/" target="_blank"><img src="https://nodei.co/npm/yarfl.png?downloads=true&amp;downloadRank=true&amp;stars=true" alt="NPM"></a></p>
-<h2 id="warning-experimental-not-ready-for-production">Warning: experimental, not ready for production</h2>
-<h2 id="features">Features</h2>
-<ul>
-<li>Easy and JSON-serializable configuration.</li>
-<li>Reactive updates with input binding.</li>
-<li>Reactive validation with error messages.</li>
-<li>Supports both sync and async validation.</li>
-<li>Array fields.</li>
-<li>Nested fields.</li>
-<li>Easily integrated with component libraries (Material Ui, React Widgets, React Select, etc).</li>
-<li>Adheres to functional and immutable design principles.</li>
-<li>Written in Typescript.</li>
-</ul>
-<h2 id="getting-started">Getting started</h2>
-<p>See the <a href="https://axelyung.github.io/yarfl/docs/getting-started.html" target="_blank">getting started</a> section of the documentation.</p>
-<h2 id="demo">Demo</h2>
-<p>There is a working live demo of this library&apos;s implementation <a href="https://axelyung.github.io/yarfl-examples" target="_blank">here</a> with accompanying <a href="https://github.com/axelyung/yarfl-examples" target="_blank">source code</a>.</p>
-<h2 id="why">Why?</h2>
-<p>Neither <a href="https://github.com/erikras/redux-form" target="_blank">Redux Form</a> nor <a href="https://github.com/davidkpiano/react-redux-form" target="_blank">React Redux Form</a> (the two most popular React/Redux form libraries) provide an easy way of creating serializable form configurations. Furthermore, both libraries require the use of their own form and/or input components leading to unnecessary complexity. This library attempts to solve the first issue by dynamically creating a reducer function from serializable configurations and the second by exposing an API that does not <em>require</em> the need for special React components. The benefit is that more of the forms&apos; functionality can be abstracted to the configuration rather than having to create individual form/field components.</p>
+                                <h1 id="getting-started">Getting started</h1>
+<ol>
+<li><p>Install dependencies (<code>redux</code>, <code>react</code>, <code>react-redux</code>, <code>redux-thunk</code> are peer dependencies):</p>
+<pre><code class="lang-bash"> yarn add redux react react-redux redux-thunk yarfl
+</code></pre>
+</li>
+<li><p>Define a config object with a <code>fields</code> property describing what fields should be part of the Redux state and how they should be validated. The <code>rules</code> string describes which rules from <a href="https://github.com/skaterdav85/validatorjs#available-rules" target="_blank">validatorjs</a> the field should be validated against (optional).</p>
+<pre><code class="lang-javascript"> <span class="hljs-comment">//config.js</span>
+ <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> myFormConfig = {
+     name: <span class="hljs-string">&apos;myForm&apos;</span>,
+     fields: {
+         name: {
+             rules: <span class="hljs-string">&apos;required&apos;</span>
+         },
+         email: {
+             rules: <span class="hljs-string">&apos;required|email&apos;</span>
+         },
+         age: {
+             rules: <span class="hljs-string">&apos;required|min:18&apos;</span>
+         }
+     }
+ }
+</code></pre>
+</li>
+<li><p>Create a reducer, initial state and a connector by passing the <code>config</code> object to the <code>init</code> function and then simply create the Redux store as you normally would:</p>
+<pre><code class="lang-javascript"> <span class="hljs-comment">// store.js</span>
+ <span class="hljs-keyword">import</span> { init } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;yarfl&apos;</span>;
+ <span class="hljs-keyword">import</span> { createStore, applyMiddleware } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;redux&apos;</span>;
+ <span class="hljs-keyword">import</span> thunk <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;redux-thunk&apos;</span>;
+ <span class="hljs-keyword">import</span> { myFormConfig } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./config&apos;</span>
+
+ <span class="hljs-comment">// create a reducer, initial state and a connector</span>
+ <span class="hljs-keyword">const</span> { reducer, initialState, connect } = init(myFormConfig);
+
+ <span class="hljs-comment">// redux-thunk is a peer dependency of yarfl</span>
+ <span class="hljs-keyword">const</span> enhancers = applyMiddleware(thunk)
+
+ <span class="hljs-keyword">const</span> store = createStore(reducer, initialState, enhancers);
+
+ <span class="hljs-keyword">export</span> { store, connect }
+</code></pre>
+</li>
+<li><p>Set up the <a href="https://github.com/reduxjs/react-redux/blob/master/docs/api.md#provider-store" target="_blank"><code>Provider</code></a> as you normally would with React Redux. To connect a React component with the store from the previous step use the <code>connect</code> method that we created with <code>init</code> in step three. This <code>connect</code> method doesn&apos;t require <code>mapStateToProps</code> or <code>mapDispatchToProps</code> arguments, this is taken care of by Yarfl automatically. Just pass the React component as its first and only argument.</p>
+<pre><code class="lang-jsx"> <span class="hljs-comment">// App.js</span>
+ <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;react&apos;</span>;
+ <span class="hljs-keyword">import</span> { Provider } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;react-redux&apos;</span>;
+ <span class="hljs-keyword">import</span> { store } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./store.js&apos;</span>
+ <span class="hljs-keyword">import</span> MyFormComponent <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./MyFormComponent.js&apos;</span>;
+
+ <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+     render() {
+         <span class="hljs-keyword">return</span> (
+             <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Provider</span> <span class="hljs-attr">store</span>=<span class="hljs-string">{store}</span>&gt;</span>
+                 <span class="hljs-tag">&lt;<span class="hljs-name">MyFormComponent</span> /&gt;</span>
+             <span class="hljs-tag">&lt;/<span class="hljs-name">Provider</span>&gt;</span>
+         )
+     }
+ }
+</span></code></pre>
+<pre><code class="lang-jsx"> <span class="hljs-comment">// MyFormComponent.js</span>
+ <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;react&apos;</span>;
+ <span class="hljs-keyword">import</span> { connect } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./store.js&apos;</span>;
+
+ <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyFormComponent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+ ...
+ }
+
+ <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> connect(MyComponent)
+</code></pre>
+</li>
+<li><p>When connected, a form prop of the name specified in the config object (in our case <code>myForm</code>) is passed to the React component. The <code>myForm</code> prop is an object containing a handful of properties and methods to interact with the store.</p>
+<pre><code class="lang-jsx"> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyComponent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+     render () {
+         <span class="hljs-keyword">const</span> { select, valid, errors } = <span class="hljs-keyword">this</span>.props.myForm;
+         <span class="hljs-comment">/**
+         * The &apos;select&apos; function accepts a key string and
+         * returns an object containing the name field
+         * object from the store with a &apos;bind&apos; function.
+         */</span>
+         <span class="hljs-keyword">const</span> nameField = select(<span class="hljs-string">&apos;name&apos;</span>);
+         <span class="hljs-keyword">return</span> (
+             &lt;form&gt;
+                 &lt;div&gt;
+                     {/*
+                         The &apos;bind&apos; function returns an object of properties
+                         that can be spread on an input element effectively
+                         binding that component to update and track the state.
+                     */}
+                     &lt;label&gt;{nameField.label}&lt;/label&gt;&lt;br/&gt;
+                     &lt;input {...nameField.bind()} /&gt;
+                 &lt;/div&gt;
+                 {/*
+                     The &apos;valid&apos; property describes if all fields
+                     registered in the Redux store pass their
+                     validation rules.
+                 */}
+                 &lt;button type=&quot;submit&quot; disabled={!valid} /&gt;
+                 &lt;div&gt;
+                     {/*
+                         The &apos;errors&apos; array contains the first error
+                         message (if any) for all registered fields.
+                     */}
+                     &lt;label&gt;All errors:&lt;/label&gt;
+                     &lt;ul&gt;
+                         {errors.map(err =&gt; &lt;li&gt;{err}&lt;/li&gt;)}
+                     &lt;/ul&gt;
+                 &lt;/div&gt;
+             &lt;/form&gt;
+         )
+     }
+ }
+</code></pre>
+<p> The <code>bind</code> method returns an object containing input attributes (with <code>&quot;value&quot;</code>) from the store and <code>onChange</code>, <code>onBlur</code> and <code>onFocus</code> handlers to dispatch update actions.</p>
+<pre><code class="lang-javascript"> <span class="hljs-keyword">const</span> bindProps = select(<span class="hljs-string">&apos;name&apos;</span>).bind();
+
+ <span class="hljs-comment">/*
+ bindProps = {
+     value: &apos;&apos;,
+     default: &apos;&apos;,
+     id: &apos;name&apos;,
+     name: &apos;name&apos;,
+     type: &apos;text&apos;,
+     label: &apos;Name&apos;,
+     className: &apos;&apos;,
+     placeholder: &apos;Name&apos;,
+     disabled: false,
+     autoFocus: false,
+     onChange: (e: InputEvent, value?: any) =&gt; void,
+     onBlur: () =&gt; void,
+     onFocus: () =&gt; void,
+ }
+ */</span>
+</code></pre>
+<p> Using the spread syntax will attach all the props to the input element, but you are free to choose which properties you want to use or create new ones from <code>bind</code>&apos;s return values:</p>
+<pre><code class="lang-jsx"> render() {
+     <span class="hljs-keyword">const</span> { select } = <span class="hljs-keyword">this</span>.props;
+     <span class="hljs-keyword">const</span> { id, value, onChange } = select(<span class="hljs-string">&apos;email&apos;</span>).bind();
+     <span class="hljs-keyword">return</span> (
+         ...
+         &lt;input
+             id={<span class="hljs-string">`<span class="hljs-subst">${id}</span>-is-the-id`</span>}
+             name=<span class="hljs-string">&quot;custom-email-name&quot;</span>
+             value={value}
+             onChange={(e, value) =&gt; {
+                 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;About to dispatch...&apos;</span>)
+                 onChange(e);
+                 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;Dispatch complete!&apos;</span>)
+             }}
+         /&gt;
+         ...
+     )
+ }
+</code></pre>
+</li>
+<li><p>To initiate more than one form just add more config objects as input parameters from the <code>init</code> function from step three.</p>
+<pre><code class="lang-javascript"> <span class="hljs-keyword">import</span> { loginFormConfig, newUserConfig, ... } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./configs&apos;</span>
+
+ <span class="hljs-comment">// pass one or more config objects to init</span>
+ <span class="hljs-keyword">const</span> { reducer, initialState, connect } = init(loginFormConfig, newUserConfig, ...);
+</code></pre>
+</li>
+</ol>
 
                                 
                                 </section>
@@ -584,8 +720,12 @@
 
             
                 
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Introduction">
+                    <i class="fa fa-angle-left"></i>
+                </a>
                 
-                <a href="getting-started.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Getting started">
+                
+                <a href="faq.html" class="navigation navigation-next " aria-label="Next page: FAQ">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -596,7 +736,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"Getting started","level":"1.2","depth":1,"path":"getting-started.md","ref":"getting-started.md","articles":[]},"dir":"ltr"},"config":{"plugins":["advanced-emoji","insert-logo-link"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"insert-logo-link":{"src":"./logo.svg","url":"http://examples"},"advanced-emoji":{"embedEmojis":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Axel Yung","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Yarfl","gitbook":"*","description":"Yet Another Redux Forms Library"},"file":{"path":"README.md","mtime":"2018-07-24T19:08:48.474Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-07-24T19:10:08.967Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Getting started","level":"1.2","depth":1,"next":{"title":"FAQ","level":"1.3","depth":1,"path":"faq.md","ref":"faq.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["advanced-emoji","insert-logo-link"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"insert-logo-link":{"src":"./logo.svg","url":"http://examples"},"advanced-emoji":{"embedEmojis":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Axel Yung","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Yarfl","gitbook":"*","description":"Yet Another Redux Forms Library"},"file":{"path":"getting-started.md","mtime":"2018-07-23T20:22:04.655Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-07-24T19:10:08.967Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

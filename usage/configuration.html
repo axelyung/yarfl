@@ -1,0 +1,756 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Configuration · Yarfl</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="Axel Yung">
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-advanced-emoji/emoji-website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-insert-logo-link/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="configuration.html" />
+    
+    
+    <link rel="prev" href="umd-setup.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../getting-started.html">
+            
+                <a href="../getting-started.html">
+            
+                    
+                    Getting started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../faq.html">
+            
+                <a href="../faq.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Usage</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="umd-setup.html">
+            
+                <a href="umd-setup.html">
+            
+                    
+                    UMD Setup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="configuration.html">
+            
+                <a href="configuration.html#configuration">
+            
+                    
+                    Configuration
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.2.1" data-path="configuration.html">
+            
+                <a href="configuration.html#basics">
+            
+                    
+                    Basics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="configuration.html">
+            
+                <a href="configuration.html#nested-fields">
+            
+                    
+                    Nested fields
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="configuration.html">
+            
+                <a href="configuration.html#array-fields">
+            
+                    
+                    Array fields
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.4" data-path="configuration.html">
+            
+                <a href="configuration.html#custom-rules">
+            
+                    
+                    Custom rules
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.5" data-path="configuration.html">
+            
+                <a href="configuration.html#async-validation">
+            
+                    
+                    Async validation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.6" data-path="configuration.html">
+            
+                <a href="configuration.html#getters-setters">
+            
+                    
+                    Getters/setters
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="initialization.html">
+            
+                <a href="initialization.html#initialization">
+            
+                    
+                    Initialization
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.3.1" data-path="initialization.html">
+            
+                <a href="initialization.html#with-combineReducers">
+            
+                    
+                    With combineReducers
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="connecting.html">
+            
+                <a href="connecting.html#connecting-to-react">
+            
+                    
+                    Connecting to React
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.4.1" data-path="connecting.html">
+            
+                <a href="connecting.html#with-connect">
+            
+                    
+                    With connect
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4.2" data-path="connecting.html">
+            
+                <a href="connecting.html#with-formProvider">
+            
+                    
+                    With FormProvider
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="form-properties.html">
+            
+                <a href="form-properties.html#using-form-props">
+            
+                    
+                    Using form props
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.5.1" data-path="form-properties.html">
+            
+                <a href="form-properties.html#select">
+            
+                    
+                    select
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="local-forms.html">
+            
+                <a href="local-forms.html">
+            
+                    
+                    Local forms without Redux
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">API Reference</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../api/Config.html">
+            
+                <a href="../api/Config.html">
+            
+                    
+                    Config
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../api/FieldConfig.html">
+            
+                <a href="../api/FieldConfig.html">
+            
+                    
+                    FieldConfig
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../api/init.html">
+            
+                <a href="../api/init.html">
+            
+                    
+                    init
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../api/connect.html">
+            
+                <a href="../api/connect.html">
+            
+                    
+                    connect
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="../api/FormProvider.html">
+            
+                <a href="../api/FormProvider.html">
+            
+                    
+                    FormProvider
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="../api/Form.html">
+            
+                <a href="../api/Form.html">
+            
+                    
+                    Form
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="../api/select.html">
+            
+                <a href="../api/select.html">
+            
+                    
+                    select
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="../api/LocalForm.html">
+            
+                <a href="../api/LocalForm.html">
+            
+                    
+                    LocalForm
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Configuration</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="configuration">Configuration</h1>
+<h3 id="basics">Basics</h3>
+<p>Every form is defined by a <a href="../api/Config.html"><code>Config</code></a> object. The only required properties are <code>name</code> and <code>fields</code>. The <code>name</code> identifies how the form will be exposed when connecting to components later on and <code>fields</code> are the input fields that make up the form.</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> loginFormConfig = {
+    name: <span class="hljs-string">&apos;loginForm&apos;</span>,
+    fields: {
+        email: {
+            rules: <span class="hljs-string">&apos;required|email&apos;</span>
+        },
+        password: {
+            rules: <span class="hljs-string">&apos;required&apos;</span>
+        },
+        <span class="hljs-comment">// fields can be initialized with an empty</span>
+        <span class="hljs-comment">// object if they don&apos;t need validation and</span>
+        <span class="hljs-comment">// can be set to defaults</span>
+        optional: {}
+    }
+}
+</code></pre>
+<p>See the api reference for a complete documentation of available <a href="../api/Config.html">form</a> and <a href="../api/FieldConfig.html">field</a> configuration options.</p>
+<h3 id="nested-fields">Nested fields</h3>
+<p>Sometimes it might be necessary to divide up a form into <a href="https://axelyung.github.io/yarfl-examples/#/partitioned" target="_blank">different sections</a> or <a href="https://axelyung.github.io/yarfl-examples/#/wizard/personal-info" target="_blank">across pages</a>. In these cases we can create nested fields. Instead of defining field options on the top layer of the <code>fields</code> tree we define &quot;parent&quot; fields with their own <code>fields</code> property. There is no limit as to how deep nested fields can be defined.</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> newUserFormConfig = {
+    name: <span class="hljs-string">&apos;newUserForm&apos;</span>,
+    fields: {
+        step1: {
+            fields: {
+                firsName: {
+                    rules: <span class="hljs-string">&apos;required&apos;</span>
+                },
+                lastName: {
+                    rules: <span class="hljs-string">&apos;required&apos;</span>
+                }
+            }
+        },
+        step2: {
+            fields: {
+                email: {
+                    rules: <span class="hljs-string">&apos;required&apos;</span>
+                },
+                telephone: {
+                    rules: <span class="hljs-string">&apos;required&apos;</span>
+                }
+            }
+        }
+        ...
+    }
+}
+</code></pre>
+<h3 id="array-fields">Array fields</h3>
+<p>Array fields allow the user to <a href="https://axelyung.github.io/yarfl-examples/#/array-fields" target="_blank">dynamically add new groups of fields</a> in a form. For example, we might want to create several new users at once. To define an array field define a &quot;parent&quot; field as in nested fields, but add <code>multiple: true</code>.</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> newUsersFormConfig = {
+    name: <span class="hljs-string">&apos;newUsersForm&apos;</span>,
+    fields: {
+        users: {
+            multiple: <span class="hljs-literal">true</span>,
+            fields: {
+                firsName: {
+                    rules: <span class="hljs-string">&apos;required&apos;</span>
+                },
+                lastName: {
+                    rules: <span class="hljs-string">&apos;required&apos;</span>
+                }
+                ...
+            }
+        },
+    },
+};
+</code></pre>
+<h3 id="custom-rules">Custom rules</h3>
+<p>Custom rules are registered on the <code>customRules</code> property of a <code>Config</code> object. Each rule must contain a <code>name</code>, <code>callback</code> and <code>message</code> property. The <code>callback</code> function follows the <a href="https://github.com/skaterdav85/validatorjs#register-custom-validation-rules" target="_blank"><code>validatorjs</code> signature</a>.</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> newUserFormConfig = {
+    name: <span class="hljs-string">&apos;newUserForm&apos;</span>,
+    fields: {
+        ...
+        password: {
+            type: <span class="hljs-string">&apos;password&apos;</span>,
+            rules: <span class="hljs-string">&apos;required|not:password&apos;</span>,
+        },
+        ...
+    },
+    customRules: [{
+        name: <span class="hljs-string">&apos;not&apos;</span>,
+        callback: (value, requirement) =&gt; {
+            value.toString().toLowerCase() === requirement.toString.toLowerCase(),
+        },
+        message: <span class="hljs-string">&quot;The :attribute cannot be \&quot;password\&quot;&quot;</span>,
+    }],
+};
+</code></pre>
+<h3 id="async-validation">Async validation</h3>
+<p>Asynchronous validation rules are registered in the same way but the validation function has a length of four where the last argument (<code>passes</code>) is a called when the validation has completed. See an example <a href="https://axelyung.github.io/yarfl-examples/#/async" target="_blank">here</a>.</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> newUserFormConfig = {
+    name: <span class="hljs-string">&apos;newUserForm&apos;</span>,
+    fields: {
+        ...
+        username: {
+            rules: <span class="hljs-string">&apos;required|username&apos;</span>,
+        },
+        ...
+    },
+    customRules: [{
+        name: <span class="hljs-string">&apos;username&apos;</span>,
+        callback: (value, _req, _attr, passes) =&gt; {
+            fetch(<span class="hljs-string">`http://example.com/username-taken?username=<span class="hljs-subst">${value}</span>`</span>)
+                .then(usernameTaken =&gt; {
+                    <span class="hljs-keyword">if</span>(usernameTaken) {
+                        passes(<span class="hljs-literal">false</span>, <span class="hljs-string">`The username &apos;<span class="hljs-subst">${value}</span>&apos; is not available!`</span>);
+                    } <span class="hljs-keyword">else</span> {
+                        passes();
+                    }
+                })
+                .catch(err =&gt; {
+                    <span class="hljs-built_in">console</span>.error(<span class="hljs-string">&apos;Error checking username:\n&apos;</span>, err);
+                    passes(<span class="hljs-literal">false</span>, <span class="hljs-string">`Error checking availability of username!`</span>);
+                })
+        },
+    }],
+};
+</code></pre>
+<h3 id="getterssetters">Getters/setters</h3>
+<p>In some cases it might be helpful to have a way of <a href="https://axelyung.github.io/yarfl-examples/#/getters-setters" target="_blank">transforming the field&apos;s value</a> between reading from and writing to the store. Each field can be configured with optional <code>getter</code> and <code>setter</code> properties to achieve just that.</p>
+<p>In the following example the user writes/reads a base 10 number, but a binary string value is persisted to the store. When reading from the store, this binary string is converted back into a base 10 number.</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> newUserFormConfig = {
+    name: <span class="hljs-string">&apos;newUserForm&apos;</span>,
+    fields: {
+        ...
+        age: {
+            ...
+            setter: value =&gt; <span class="hljs-built_in">parseInt</span>(value).toString(<span class="hljs-number">2</span>),
+            getter: (value) =&gt; {
+                <span class="hljs-keyword">const</span> result = <span class="hljs-built_in">parseInt</span>(value, <span class="hljs-number">2</span>);
+                <span class="hljs-keyword">return</span> <span class="hljs-built_in">Number</span>.isNaN(result) ? <span class="hljs-string">&apos;&apos;</span> : result;
+            },
+        },
+        ...
+    },
+};
+</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="umd-setup.html" class="navigation navigation-prev " aria-label="Previous page: UMD Setup">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="configuration.html#basics" class="navigation navigation-next " aria-label="Next page: Basics">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Configuration","level":"2.2","depth":1,"next":{"title":"Basics","level":"2.2.1","depth":2,"anchor":"#basics","path":"usage/configuration.md","ref":"usage/configuration.md#basics","articles":[]},"previous":{"title":"UMD Setup","level":"2.1","depth":1,"path":"usage/umd-setup.md","ref":"usage/umd-setup.md","articles":[]},"dir":"ltr"},"config":{"plugins":["advanced-emoji","insert-logo-link"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"insert-logo-link":{"src":"./logo.svg","url":"http://examples"},"advanced-emoji":{"embedEmojis":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Axel Yung","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Yarfl","gitbook":"*","description":"Yet Another Redux Forms Library"},"file":{"path":"usage/configuration.md","mtime":"2018-07-23T20:43:03.825Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-07-24T19:10:08.967Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-insert-logo-link/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
