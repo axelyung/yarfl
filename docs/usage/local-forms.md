@@ -1,6 +1,6 @@
 # Local forms without Redux
 
-In some cases we may have forms that don't need to be persisted to the store. The `LocalForm` component provides a way of using Yarfl's API without having to initialized the form in Redux. `LocalForm` stores and updates data in its own React state and renders the form via a render prop.
+In some cases we may have forms that don't need to be persisted to the store (in some cases even preferable as discussed [here](https://github.com/reduxjs/redux/issues/1287#issuecomment-175351978). The `LocalForm` component provides a way of using Yarfl's API without having to initialized the form in Redux. `LocalForm` stores and updates data in its own React state and renders the form via a render prop.
 
 ```javascript
 import React from 'react';
