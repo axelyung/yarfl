@@ -6,7 +6,7 @@ The `LocalForm` component initializes and creates the form in its own state rath
 
 | Name     |    Type    | Description                                                       |
 |----------|:----------:|-------------------------------------------------------------------|
-| `config` |  `Config`  | A `Config` object defining the form.                              |
+| `config` |  `Config`  | A [`Config`](./Config.md) object defining the form.                              |
 | `render` | `function` | A render prop accepting the a `Form` object as its only property. |
 
 ### Example

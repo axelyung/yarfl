@@ -2454,6 +2454,10 @@ gitbook-plugin-advanced-emoji@^0.2.2:
   dependencies:
     emojify.js "^1.1.0"
 
+gitbook-plugin-insert-logo-link@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/gitbook-plugin-insert-logo-link/-/gitbook-plugin-insert-logo-link-1.0.1.tgz#de84eb475f308fbca18a40bdc180c62ec2db4bc2"
+
 github-url-from-git@~1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/github-url-from-git/-/github-url-from-git-1.4.0.tgz#285e6b520819001bde128674704379e4ff03e0de"
