@@ -7,10 +7,9 @@ The `init` function accepts as many `config` objects as necessary:
 
 ```javascript
 import { init } from 'yarfl';
-import { createStore } from 'redux';
 import { loginFormConfig, paymentFormConfig, ... } from './configs'
 
-const { reducer, initState, connect } = init(loginFormConfig, paymentFormConfig, ...);
+const { reducer, initialState, connect } = init(loginFormConfig, paymentFormConfig, ...);
 ```
 
 #### How do I connect a component to only one `yarfl` form?
@@ -18,26 +17,30 @@ const { reducer, initState, connect } = init(loginFormConfig, paymentFormConfig,
 By default the `connect` HOC will track all the registered forms, but `connect` as a property for each form (same as the `name` for each config) so that React components don't have to listen to everything.
 
 ```javascript
-// redux.js
+// store.js
 import { init } from 'yarfl';
-import { createStore } from 'redux';
 import { loginFormConfig, paymentFormConfig, ... } from './configs'
 
-const { reducer, initState, connect } = init(loginFormConfig, paymentFormConfig, ...);
+// forms are configured with names 'loginForm' and 'paymentForm'
+const { reducer, initialState, connect } = init(loginFormConfig, paymentFormConfig, ...);
+```
 
+```javascript
 // LoginForm.js
 import React from 'react';
-import { connect } from './redux.js';
+import { connect } from './store.js';
 
 class LoginForm extends React.Component {
 ...
 }
 
 export default connect.loginForm(MyComponent)
+```
 
+```javascript
 // PaymentForm.js
 import React from 'react';
-import { connect } from './redux.js';
+import { connect } from './store.js';
 
 class PaymentForm extends React.Component {
 ...

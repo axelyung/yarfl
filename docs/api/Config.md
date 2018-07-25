@@ -1,11 +1,11 @@
-# `config`
+# `Config`
 
 The config object defines a form's fields, behavior and initial state.
 
 | Property             |    Type    |         Default        | Description                                                                                                                                                                                                                                              |
 |----------------------|:----------:|:----------------------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `name`               |  `string`  |       (required)       | The name to map the form state to in redux (pick a name that won't conflict with other state nodes or form names)                                                                                                                                        |
-| `fields`             |  `object`  |       (required)       | An object of `Field` properties (`{ [key: string]: Field }`). See the `Field` definition.                                                                                                                                                                |
+| `fields`             |  `object`  |       (required)       | An object of `FieldConfig` properties (`{ [key: string]: FieldConfig }`). See the [`FieldConfig` definition](./FieldConfig.md).                                                                                                                                                                |
 | `customRules`        |   `array`  |                        | An array of custom rules to use when defining fields. See `validatorjs` implementation [here](https://github.com/skaterdav85/validatorjs#register-custom-validation-rules).                                                                              |
 | `errorMessages`      |  `object`  |                        | An array of custom error messages registered as objects (`{ name, callback, message })`. See `validatorjs` implementation [here](https://github.com/skaterdav85/validatorjs#custom-error-messages) for more details.                                                                                                            |
 | `mapState`           | `function` | `state => state[name]` | A selector function to pick out the form from the state tree. By default this is set to select the property on the first level of the state tree matching the `name` property. This property should only be explicitly set when using `combineReducers`. |
