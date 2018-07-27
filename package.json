@@ -1,6 +1,6 @@
 {
   "name": "yarfl",
-  "version": "0.1.0",
+  "version": "0.0.0-semantically-released",
   "description": "Yet Another Redux Forms Library",
   "author": {
     "name": "Axel Yung",
@@ -11,7 +11,7 @@
   "homepage": "https://axelyung.github.io/yarfl/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/axelyung/yarfl.git"
+    "url": "https://github.com/axelyung/yarfl.git"
   },
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -29,8 +29,12 @@
     "redux",
     "form",
     "validation",
+    "validator",
     "async",
-    "immutable"
+    "immutable",
+    "state",
+    "json",
+    "schema"
   ],
   "scripts": {
     "reset": "rimraf node_modules && yarn cache clean && yarn",
@@ -48,7 +52,9 @@
     "build:umd-min": "cross-env NODE_ENV=production rollup -c",
     "build:docs": "gitbook build",
     "build": "run-s clean build:*",
-    "publish:docs": "yarn build:docs && gh-pages -d _book"
+    "commit": "git-cz",
+    "publish:docs": "yarn build:docs && gh-pages -d _book",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "peerDependencies": {
     "react": "^16.4.1",
@@ -56,6 +62,7 @@
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0"
   },
+  "optionalDependencies": {},
   "dependencies": {
     "camel-case": "^3.0.0",
     "param-case": "^2.1.1",
@@ -73,7 +80,9 @@
     "@types/react-redux": "^6.0.3",
     "@types/redux": "^3.6.0",
     "@types/validatorjs": "^3.7.1",
+    "commitizen": "^2.10.1",
     "cross-env": "^5.1.4",
+    "cz-conventional-changelog": "^2.1.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "filesize": "^3.6.1",
@@ -99,6 +108,7 @@
     "rollup-plugin-size-snapshot": "^0.6.1",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-uglify": "^4.0.0",
+    "semantic-release": "^15.8.1",
     "ts-jest": "^22.4.6",
     "ts-node": "^7.0.0",
     "tslint": "^5.9.1",
@@ -136,5 +146,9 @@
       "node_modules/(?!ramda)"
     ]
   },
-  "optionalDependencies": {}
+  "config": {
+      "commitizen": {
+          "path": "node_modules/cz-conventional-changelog"
+        }
+    }
 }
