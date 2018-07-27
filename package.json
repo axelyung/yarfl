@@ -53,8 +53,7 @@
     "build:docs": "gitbook build",
     "build": "run-s clean build:*",
     "commit": "git-cz",
-    "publish:docs": "yarn build:docs && gh-pages -d _book",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "publish:docs": "yarn build:docs && gh-pages -d _book"
   },
   "peerDependencies": {
     "react": "^16.4.1",
