@@ -4,9 +4,9 @@ The init function accepts one or more `Config` objects a arguments and returns a
 
 ### Arguments
 
-| Name      | Type     | Description                          |
-|-----------|:--------:|--------------------------------------|
-| `configN` | `Config` | A `Config` object defining the form. |
+| Name      |   Type   | Description                                         |
+|-----------|:--------:|-----------------------------------------------------|
+| `configN` | `Config` | A [`Config`](./Config.md) object defining the form. |
 
 ### Returns
 
@@ -16,15 +16,16 @@ An object with the following properties:
 |----------------|:----------:|--------------------------------------------------------------------------------------------------------------|
 | `reducer`      | `function` | A reducer function to pass as the first argument in `createStore` or to be implemented in `combineReducers`. |
 | `initialState` |  `object`  | The initial form state as the second argument in `createStore` or to be combined with other initial states.  |
-| `connect`      | `function` | A HOC to connect React components to the store via props.                                                    |
+| `connect`      | `function` | A HOC to connect React components to the store via the React Redux `Provider` API.                           |
 | `FormProvider` | `function` | A React component that exposes state and dispatching via a render prop.                                      |
 
-### Example 
+### Example
 
 ```javascript
 import { init } from 'yarfl';
-import { createStore } from 'redux';
-import { loginFormConfig, newUserConfig, ... } from './configs';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { loginFormConfig, newUserConfig, ... } from './configs'
 
 const {
     reducer,
@@ -33,7 +34,8 @@ const {
     FormProvider
 } = init(loginFormConfig, newUserConfig, ...);
 
-const store = createStore(reducer, initialState);
+// redux-thunk is a peer dependency of yarfl
+const enhancers = applyMiddleware(thunk)
 
-export { connect, FormProvider, store };
+const store = createStore(reducer, initialState, enhancers);
 ```

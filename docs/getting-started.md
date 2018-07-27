@@ -6,11 +6,11 @@
     yarn add redux react react-redux redux-thunk yarfl
     ```
 
-2. Define a `config` object with a `fields` property describing what fields should be part of the Redux state and how they should be validated. The `rules` string describes which rules from [validatorjs](https://github.com/skaterdav85/validatorjs#available-rules) the field should be validated against.
+2. Define a config object with a `fields` property describing what fields should be part of the Redux state and how they should be validated. The `rules` string describes which rules from [validatorjs](https://github.com/skaterdav85/validatorjs#available-rules) the field should be validated against (optional).
 
     ```javascript
     //config.js
-    export const config = {
+    export const myFormConfig = {
         name: 'myForm',
         fields: {
             name: {
@@ -29,23 +29,30 @@
 3. Create a reducer, initial state and a connector by passing the `config` object to the `init` function and then simply create the Redux store as you normally would:
 
     ```javascript
-    // redux.js
+    // store.js
     import { init } from 'yarfl';
-    import { createStore } from 'redux';
-    import { config } from './config'
+    import { createStore, applyMiddleware } from 'redux';
+    import thunk from 'redux-thunk';
+    import { myFormConfig } from './config'
 
-    const { reducer, initState, connect } = init(config);
+    // create a reducer, initial state and a connector
+    const { reducer, initialState, connect } = init(myFormConfig);
 
-    export const store = createStore(reducer, initState);
+    // redux-thunk is a peer dependency of yarfl
+    const enhancers = applyMiddleware(thunk)
+
+    const store = createStore(reducer, initialState, enhancers);
+
+    export { store, connect }
     ```
 
-4. Set up the store `Provider` as you normally would with `react-redux`. To connect a React component with the store from the previous step use the `connect` method that we created with `init` in step three. This `connect` method doesn't require `mapStateToProps` or `mapDispatchToProps` arguments. This is taken care of by `yarfl` automatically!
+4. Set up the [`Provider`](https://github.com/reduxjs/react-redux/blob/master/docs/api.md#provider-store) as you normally would with React Redux. To connect a React component with the store from the previous step use the `connect` method that we created with `init` in step three. This `connect` method doesn't require `mapStateToProps` or `mapDispatchToProps` arguments, this is taken care of by Yarfl automatically. Just pass the React component as its first and only argument.
 
     ```jsx
     // App.js
     import React from 'react';
     import { Provider } from 'react-redux';
-    import { store } from './redux.js'
+    import { store } from './store.js'
     import MyFormComponent from './MyFormComponent.js';
 
     class App extends React.Component {
@@ -57,10 +64,11 @@
             )
         }
     }
-
+    ```
+    ```jsx
     // MyFormComponent.js
     import React from 'react';
-    import { connect } from './redux.js';
+    import { connect } from './store.js';
 
     class MyFormComponent extends React.Component {
     ...
@@ -69,17 +77,16 @@
     export default connect(MyComponent)
     ```
 
-5. When connected, a "form prop" of the name specified in the config object (in our case `myForm`) is passed to the React component. The `myForm` prop is an object containing a handful of properties and methods to interact with the validated Redux store.
+5. When connected, a form prop of the name specified in the config object (in our case `myForm`) is passed to the React component. The `myForm` prop is an object containing a handful of properties and methods to interact with the store.
 
     ```jsx
     class MyComponent extends React.Component {
-
         render () {
             const { select, valid, errors } = this.props.myForm;
             /**
             * The 'select' function accepts a key string and
-            * returns an object containing the 'name' field
-            * object from state with a 'bind' function.
+            * returns an object containing the name field
+            * object from the store with a 'bind' function.
             */
             const nameField = select('name');
             return (
@@ -115,7 +122,7 @@
     }
     ```
 
-    The `bind` method returns an object containing input props including `value` with the field value from the state and `onChange`, `onBlur` and `onFocus` handlers which dispatch actions to update state.
+    The `bind` method returns an object containing input attributes (with `"value"`) from the store and `onChange`, `onBlur` and `onFocus` handlers to dispatch update actions.
 
     ```javascript
     const bindProps = select('name').bind();
@@ -144,11 +151,8 @@
     ```jsx
     render() {
         const { select } = this.props;
-        const emailBindProps = select('email').bind();
-        const { id, value, onChange } = emailBindProps;
+        const { id, value, onChange } = select('email').bind();
         return (
-            ...
-            <input {...select('name').bind()} />
             ...
             <input
                 id={`${id}-is-the-id`}
@@ -168,10 +172,8 @@
 6. To initiate more than one form just add more config objects as input parameters from the `init` function from step three.
 
     ```javascript
-    import { init } from 'yarfl';
-    import { createStore } from 'redux';
+    import { loginFormConfig, newUserConfig, ... } from './configs'
 
-    const { reducer, initState, connect } = init(config1, config2, config3);
-
-    const store = createStore(reducer, initState);
+    // pass one or more config objects to init
+    const { reducer, initialState, connect } = init(loginFormConfig, newUserConfig, ...);
     ```

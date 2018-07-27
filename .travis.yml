@@ -1,0 +1,21 @@
+sudo: false
+language: node_js
+cache:
+  yarn: true
+  directories:
+    - node_modules
+notifications:
+  email: false
+node_js:
+  - "node"
+script:
+  - yarn test
+  - yarn build
+after_success:
+  - yarn semantic-release
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      yarn publish:docs;
+    fi
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
