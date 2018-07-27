@@ -9,7 +9,7 @@
     ],
     "pluginsConfig": {
         "insert-logo-link": {
-            "src": "./logo.svg"
+            "src": "/logo.svg"
         }
     }
 }
