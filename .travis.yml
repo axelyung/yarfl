@@ -13,6 +13,9 @@ script:
   - yarn build
 after_success:
   - yarn semantic-release
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      yarn publish:docs;
+    fi
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
