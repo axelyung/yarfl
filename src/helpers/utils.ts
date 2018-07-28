@@ -166,6 +166,10 @@ export const logError = (...errorMessage: string[]) => {
     console.error(`YARFL: ${errorMessage.join(' ')}`);
 };
 
+export const logWarning = (...errorMessage: string[]) => {
+    console.warn(`YARFL: ${errorMessage.join(' ')}`);
+};
+
 export const flatten = (target: object| any[]) =>
     Array.isArray(target)
         ? flattenArray(target)
