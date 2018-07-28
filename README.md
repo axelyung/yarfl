@@ -40,7 +40,7 @@ Neither [Redux Form](https://github.com/erikras/redux-form) nor [React Redux For
 
 ## Getting started
 
-From the [getting started](https://axelyung.github.io/yarfl/docs/getting-started.html) section of the documentation.
+From the [getting started](https://axelyung.github.io/yarfl/getting-started.html) section of the documentation.
 
 1. Install dependencies (`redux`, `react`, `react-redux`, `redux-thunk` are peer dependencies):
 

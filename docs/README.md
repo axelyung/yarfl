@@ -28,7 +28,7 @@
 
 ## Getting started
 
-See the [getting started](https://axelyung.github.io/yarfl/docs/getting-started.html) section of the documentation.
+See the [getting started](https://axelyung.github.io/yarfl/getting-started.html) section of the documentation.
 
 ## Demo
 
