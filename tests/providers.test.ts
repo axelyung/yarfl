@@ -2,10 +2,10 @@ import { extract } from 'src/helpers/utils';
 import { InputEvent } from 'src/typings';
 import { hybridConfig, hybridState } from './configs/hybrid';
 import {
-    mountGenericConnectedCommponent,
+    mountGenericConnectedComponent,
     mountGenericFormProviderComponent,
     mountLocalForm,
-    mountNamedConnectedCommponent,
+    mountNamedConnectedComponent,
     mountNamedFormProviderComponent,
 } from './helpers/components';
 import {
@@ -21,9 +21,9 @@ import {
 const providers = {
     LocalForm: mountLocalForm,
     FormProvider: mountGenericFormProviderComponent,
-    connect: mountGenericConnectedCommponent,
-    ['FormProvider.named']: mountNamedFormProviderComponent,
-    ['connect.named']: mountNamedConnectedCommponent,
+    connect: mountGenericConnectedComponent,
+    'FormProvider.named': mountNamedFormProviderComponent,
+    'connect.named': mountNamedConnectedComponent,
 };
 
 Object.entries(providers).forEach(([name, mounter]) => {

@@ -9,7 +9,7 @@ import { createTestAssets } from './utils';
 // setup React adapter
 configure({ adapter: new Adapter16() });
 
-class PropsTarget extends React.Component<FormProps<any>>{
+export class PropsTarget extends React.Component<FormProps<any>>{
     public render() {
         return <div>test</div>;
     }
@@ -47,53 +47,54 @@ export const mountLocalForm = (config) => {
         config,
         render:(targetProps) => <PropsTarget {...targetProps} />,
     };
-    const component = mount(<LocalForm {...props} />);
+    const wrapper = mount(<LocalForm {...props} />);
     return {
-        getState: () => component.state(),
-        getFormProps: () => component.find(PropsTarget).props(),
+        wrapper,
+        getState: () => wrapper.state(),
+        getFormProps: () => wrapper.find(PropsTarget).props(),
     };
 };
 
-export const mountGenericConnectedCommponent = (config) => {
+export const mountGenericConnectedComponent = (config) => {
     const { store, connect } = createTestAssets(config);
     const target = createConsumerWithConnect(store, connect);
-    const component = mount(target);
+    const wrapper = mount(target);
     return {
         getState: store.getState,
         // @ts-ignore
-        getFormProps: () => component.find(PropsTarget).props().hybridForm,
+        getFormProps: () => wrapper.find(PropsTarget).props().hybridForm,
     };
 };
 
-export const mountNamedConnectedCommponent = (config) => {
+export const mountNamedConnectedComponent = (config) => {
     const { store, connect } = createTestAssets(config);
     const target = createConsumerWithConnect(store, connect.hybridForm);
-    const component = mount(target);
+    const wrapper = mount(target);
     return {
         getState: store.getState,
         // @ts-ignore
-        getFormProps: () => component.find(PropsTarget).props().hybridForm,
+        getFormProps: () => wrapper.find(PropsTarget).props().hybridForm,
     };
 };
 
 export const mountGenericFormProviderComponent = (config) => {
     const { store, FormProvider } = createTestAssets(config);
     const target = createConsumerWithFormProvider(store, FormProvider);
-    const component = mount(target);
+    const wrapper = mount(target);
     return {
         getState: store.getState,
         // @ts-ignore
-        getFormProps: () => component.find(PropsTarget).props().hybridForm,
+        getFormProps: () => wrapper.find(PropsTarget).props().hybridForm,
     };
 };
 
 export const mountNamedFormProviderComponent = (config) => {
     const { store, FormProvider } = createTestAssets(config);
     const target = createConsumerWithFormProvider(store, FormProvider);
-    const component = mount(target);
+    const wrapper = mount(target);
     return {
         getState: store.getState,
         // @ts-ignore
-        getFormProps: () => component.find(PropsTarget).props().hybridForm,
+        getFormProps: () => wrapper.find(PropsTarget).props().hybridForm,
     };
 };

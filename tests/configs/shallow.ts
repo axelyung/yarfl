@@ -6,7 +6,7 @@ type ShallowState = {
 };
 
 export const shallowConfig: Config<ShallowState> = {
-    name: 'basicForm',
+    name: 'shallowForm',
     action: 'http://api.com/endpoint',
     fields: {
         field1: {
@@ -26,9 +26,9 @@ export const shallowConfig: Config<ShallowState> = {
 };
 
 export const shallowState: StateWithForms = {
-    basicForm: {
+    shallowForm: {
         action: 'http://api.com/endpoint',
-        name: 'basicForm',
+        name: 'shallowForm',
         method: 'POST',
         fields: {
             field1: {

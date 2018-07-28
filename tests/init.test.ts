@@ -76,9 +76,9 @@ timer(() => {
         expect(typeof reducer).toBe('function');
         expect(typeof initialState).toBe('object');
         expect(typeof connect).toBe('function');
-        expect(typeof connect.basicForm).toBe('function');
+        expect(typeof connect.shallowForm).toBe('function');
         expect(typeof FormProvider).toBe('function');
-        expect(typeof FormProvider.basicForm).toBe('function');
+        expect(typeof FormProvider.shallowForm).toBe('function');
         expect(initialState).toEqual({
             ...shallowState,
             ...nestedState,
