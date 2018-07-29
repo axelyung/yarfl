@@ -38,7 +38,7 @@ const createAddArrayFieldReducer = () => (state: FormState, action: ActionUnknow
     const index = fields.length;
     const newField = createNewField(fieldKey, template, index);
     const targetPath = ['fields', ...fieldPath, 'fields'];
-    const target = getIn<any[]>(state, targetPath);
+    const target = getIn(state, targetPath);
     if (!target) {
         return state;
     }
@@ -69,7 +69,7 @@ const createDeleteArrayFieldReducer = () => (state: FormState, action: ActionUnk
     const { key, index } = checkActionForKeyAndIndex(action);
     const fieldPath = parseKey(key);
     const targetPath = ['fields', ...fieldPath, 'fields'];
-    const target = getIn<any[]>(state, targetPath);
+    const target = getIn(state, targetPath);
     if (!target) {
         return state;
     }

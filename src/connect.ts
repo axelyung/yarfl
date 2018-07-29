@@ -320,8 +320,8 @@ const createFieldBinder = (
     const fetchedValue = getter(props.value);
     const { updateField, focusField, blurField } = dispatchers;
     const bindProps = {
-        value: fetchedValue,
         ...inputProps,
+        value: fetchedValue,
         onChange: (e: SyntheticEvent<HTMLInputElement>, value?: InputValue) => {
             if (value !== undefined && value !== null) {
                 updateField(key, value);

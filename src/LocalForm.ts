@@ -1,6 +1,6 @@
 // necessary import format
 // see https://stackoverflow.com/questions/44547201/typescript-react-not-importing-correctly
-import * as _equals from 'ramda/src/equals';
+import _isEqual from 'lodash-es/isEqual';
 import * as React from 'react';
 import { localFormMap } from './connect';
 import { logWarning } from './helpers/utils';
@@ -20,7 +20,7 @@ const component = class <S extends object> extends React.Component<LocalFormProp
         const { config: oldConfig } = prevProps;
         const { config: newConfig } = this.props;
         // check if config prop name has changed
-        if (!_equals(oldConfig, newConfig)) {
+        if (!_isEqual(oldConfig, newConfig)) {
             this.initialize();
         }
     }
