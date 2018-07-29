@@ -13,8 +13,8 @@ script:
   - yarn build
 after_success:
   - yarn semantic-release
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      yarn gh-pages -d _book -r https://$GH_TOKEN@github.com/axelyung/yarfl.git;
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ];
+      then yarn gh-pages -d _book -r https://$GH_TOKEN@github.com/axelyung/yarfl.git;
     fi
 branches:
   except:
