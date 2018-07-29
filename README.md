@@ -5,7 +5,6 @@
 ##### Manage form state in React/Redux applications with reactive updates and field level validation. Heavily inspired by [MobX React Form](https://github.com/foxhound87/mobx-react-form)
 
 [![npm](https://img.shields.io/npm/v/yarfl.svg)]()
-[![node](https://img.shields.io/node/v/yarfl.svg)]()
 [![GitHub license](https://img.shields.io/github/license/axelyung/yarfl.svg)]()
 [![Downloads](https://img.shields.io/npm/dt/yarfl.svg)]()
 [![Downloads](https://img.shields.io/npm/dm/yarfl.svg)]()

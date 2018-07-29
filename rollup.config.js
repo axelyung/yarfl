@@ -3,7 +3,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
-import titleCase from 'title-case';
+import _capitalize from 'lodash/capitalize';
 import { uglify } from 'rollup-plugin-uglify';
 import replace from 'rollup-plugin-replace';
 import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
@@ -29,7 +29,7 @@ const config = {
         sizeSnapshot(),
     ],
     output: {
-        name: titleCase(pkg.name),
+        name: _capitalize(pkg.name),
         file: path.resolve(`dist/${pkg.name}.js`),
         indent: false,
         format: 'umd',
