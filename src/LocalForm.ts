@@ -1,11 +1,16 @@
-// necessary import format
+import _isEqual from 'lodash-es/isEqual';
+// necessary import format for react
 // see https://stackoverflow.com/questions/44547201/typescript-react-not-importing-correctly
-import * as _equals from 'ramda/src/equals';
 import * as React from 'react';
-import { localFormMap } from './connect';
+import { localFormConnect } from './connect';
+import { FormProviderProps } from './FormProvider';
 import { logWarning } from './helpers/utils';
 import { init } from './init';
-import { LocalFormProps } from './typings';
+import { Config } from './typings';
+
+interface LocalFormProps<S extends object> extends FormProviderProps<S>  {
+    config: Config<S>;
+}
 
 const component = class <S extends object> extends React.Component<LocalFormProps<S>> {
     private reducer: any;
@@ -20,7 +25,7 @@ const component = class <S extends object> extends React.Component<LocalFormProp
         const { config: oldConfig } = prevProps;
         const { config: newConfig } = this.props;
         // check if config prop name has changed
-        if (!_equals(oldConfig, newConfig)) {
+        if (!_isEqual(oldConfig, newConfig)) {
             this.initialize();
         }
     }
@@ -37,7 +42,6 @@ const component = class <S extends object> extends React.Component<LocalFormProp
             // if component has not been mounted set directly
             this.state = initialState;
         } else {
-
             // if component is mounted use setState to set new form
             // before updating config, reducer and setting the old
             // form to undefined
@@ -65,9 +69,9 @@ const component = class <S extends object> extends React.Component<LocalFormProp
     }
 
     public render() {
-        const { render } = this.props;
-        const props = localFormMap(this.config)(this.state, this.dispatch);
-        return render(props);
+        const { render, extra } = this.props;
+        const props = localFormConnect(this.config)(this.state, this.dispatch);
+        return render({ ...extra, ...props });
     }
 };
 

@@ -136,12 +136,14 @@ export const checkFormProps = (props: FormProps<any>) => {
         errorCount,
         valid,
         values,
+        extra,
     } = props;
     [set, clear, reset, select, showErrors, propsExtract, bind].map(fn => expectFunction(fn));
     expectArray(errors);
     expectNumber(errorCount);
     expectBoolean(valid);
     expectObject(values);
+    expectObject(extra);
 };
 
 export const checkFieldProps = (props: FieldProps) => {

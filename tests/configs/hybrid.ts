@@ -117,6 +117,7 @@ export const hybridState =  {
         fields: {
             basicField: {
                 key: 'basicField',
+                path: 'basicField',
                 focused: false,
                 touched: false,
                 changed: false,
@@ -141,6 +142,7 @@ export const hybridState =  {
             },
             parent: {
                 key: 'parent',
+                path: 'parent',
                 focused: false,
                 touched: false,
                 changed: false,
@@ -149,6 +151,7 @@ export const hybridState =  {
                 fields: {
                     child1: {
                         key: 'child1',
+                        path: 'parent.child1',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -173,6 +176,7 @@ export const hybridState =  {
                     },
                     child2: {
                         key: 'child2',
+                        path: 'parent.child2',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -181,6 +185,7 @@ export const hybridState =  {
                         fields: {
                             grandchild1: {
                                 key: 'grandchild1',
+                                path: 'parent.child2.grandchild1',
                                 focused: false,
                                 touched: false,
                                 changed: false,
@@ -205,6 +210,7 @@ export const hybridState =  {
                             },
                             grandchild2: {
                                 key: 'grandchild2',
+                                path: 'parent.child2.grandchild2',
                                 focused: false,
                                 touched: false,
                                 changed: false,
@@ -233,6 +239,7 @@ export const hybridState =  {
             },
             arrayField: {
                 key: 'arrayField',
+                path: 'arrayField',
                 focused: false,
                 touched: false,
                 changed: false,
@@ -242,6 +249,7 @@ export const hybridState =  {
                 default: {
                     arrayField1: {
                         key: 'arrayField1',
+                        path: 'arrayField.arrayField1',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -264,6 +272,7 @@ export const hybridState =  {
                     },
                     arrayField2: {
                         key: 'arrayField2',
+                        path: 'arrayField.arrayField2',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -288,7 +297,8 @@ export const hybridState =  {
                 fields: [
                     {
                         arrayField1: {
-                            key: 'arrayField1[0]',
+                            key: '[0].arrayField1',
+                            path: 'arrayField[0].arrayField1',
                             focused: false,
                             touched: false,
                             changed: false,
@@ -312,7 +322,8 @@ export const hybridState =  {
                             ],
                         },
                         arrayField2: {
-                            key: 'arrayField2[0]',
+                            key: '[0].arrayField2',
+                            path: 'arrayField[0].arrayField2',
                             focused: false,
                             touched: false,
                             changed: false,

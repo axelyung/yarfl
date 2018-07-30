@@ -33,6 +33,7 @@ export const shallowState: StateWithForms = {
         fields: {
             field1: {
                 key: 'field1',
+                path: 'field1',
                 focused: false,
                 touched: false,
                 changed: false,
@@ -57,6 +58,7 @@ export const shallowState: StateWithForms = {
             },
             field2: {
                 key: 'field2',
+                path: 'field2',
                 focused: false,
                 touched: false,
                 changed: false,

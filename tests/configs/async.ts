@@ -40,6 +40,7 @@ export const asyncState: StateWithForms = {
         fields: {
             userName: {
                 key: 'userName',
+                path: 'userName',
                 focused: false,
                 touched: false,
                 changed: false,

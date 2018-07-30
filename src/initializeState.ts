@@ -1,14 +1,10 @@
 import creatorFactory from './actions/creatorFactory';
-import {
-    camelCase,
-    firstDefined,
-    kebabCase,
-    titleCase,
-} from './helpers/utils';
+import { camelCase, firstDefined, kebabCase, titleCase } from './helpers/utils';
 import { validatorFactory } from './helpers/validator';
 import { createNewField } from './reducers/arrayReducer';
 import { formShowErrorsReducer, formValidateReducer } from './reducers/formReducer';
 import {
+    ArrayFieldState,
     CompleteConfig,
     ConfigField,
     FieldState,
@@ -28,7 +24,7 @@ export const initializeFormState = <S extends object>(config: CompleteConfig<S>,
         action = '',
         method = 'POST',
     } = config;
-    const fields = initFields(config.fields, config.addDefaults);
+    const fields = initFields(config.fields, !!config.addDefaults, '');
     const state = {
         action,
         name,
@@ -43,30 +39,39 @@ export const initializeFormState = <S extends object>(config: CompleteConfig<S>,
 const initHooks = (config: CompleteConfig, state: FormState) => {
     const { showErrorsOnInit, validateOnInit } = config;
     if (showErrorsOnInit) {
-        const { showFormErrors, validateForm } = creatorFactory(config);
-        const showErrorsAction = showFormErrors(true);
-        const updated = formShowErrorsReducer(config)(state, showErrorsAction);
-        const validator = validatorFactory(config)(state);
-        const validateAction = validateForm(validator);
-        return formValidateReducer(config)(updated, validateAction);
+        return showStateErrors(config, state);
     }
     if (validateOnInit) {
-        const validator = validatorFactory(config)(state);
-        const validateAction = creatorFactory(config).validateForm(validator);
-        return formValidateReducer(config)(state, validateAction);
+        return validateState(config, state);
     }
     return state;
 };
 
-const initFields = <S = any>(fields: PartialModel<S, ConfigField>, addDefaults: boolean = true): Model<S, FieldState> => {
+const showStateErrors = (config: CompleteConfig, state: FormState) => {
+    const { showFormErrors } = creatorFactory(config);
+    const showErrorsAction = showFormErrors(true);
+    const updated = formShowErrorsReducer(config)(state, showErrorsAction);
+    return validateState(config, updated);
+};
+
+const validateState = (config: CompleteConfig, state: FormState) => {
+    const { validateForm } = creatorFactory(config);
+    const validator = validatorFactory(config)(state);
+    const validateAction = validateForm(validator);
+    return formValidateReducer(config)(state, validateAction);
+};
+
+const initFields = <S = any>(fields: PartialModel<S, ConfigField>, addDefaults: boolean, parentPath: string): Model<S, FieldState> => {
     const entries = Object.entries(fields) as [string, ConfigField][];
-    return entries.map(([key, field]) => ({ [key]: initField(key, field, addDefaults) }))
+    return entries.map(([key, field]) => ({ [key]: initField(key, field, addDefaults, parentPath) }))
         .reduce((prev, curr) => ({ ...prev, ...curr })) as Model<S, FieldState>;
 };
 
-const initField = <K extends string>(key: K, field: ConfigField, addDefaults: boolean): FieldState => {
+const initField = <K extends string>(key: K, field: ConfigField, addDefaults: boolean, parentPath: string): FieldState => {
+    const path = parentPath ? `${parentPath}.${key}` : key;
     const common = {
         key,
+        path,
         focused: false,
         touched: false,
         changed: false,
@@ -74,14 +79,15 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         extra: field.extra || {},
     };
     if (field.fields) {
-        const fields = initFields(field.fields);
+        const fields = initFields(field.fields, addDefaults, path);
         if (field.multiple) {
+            // field.fields && field.multiple implies array field
             return {
                 ...common,
                 fieldType: FieldType.Array,
                 default: fields,
                 fields: [createNewField(key, fields, 0)],
-            } as any;
+            } as ArrayFieldState;
         }
         return { ...common, fields, fieldType: FieldType.Parent } as any;
     }
@@ -89,6 +95,7 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
     if (!addDefaults) {
         return {
             ...common,
+            fieldType: FieldType.Simple,
             value: '',
             rules: '',
             errors,
@@ -105,16 +112,12 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
     const autoFocus = firstDefined(!!field.autoFocus, false);
     const multiple = field.multiple;
     const value = firstDefined(field.value, field.default, multiple ? [] : '');
-    const dfault = firstDefined(field.default, multiple ? [] : '');
     const type = firstDefined(field.type, inputType(value));
-    const options = field.options
-        ? optionMapper(field.options, id, name, key, type)
-        : undefined;
     const props = {
         ...common,
         fieldType: FieldType.Simple,
         value: type === 'checkbox' ? !!value : value,
-        default: dfault,
+        default: firstDefined(field.default, multiple ? [] : ''),
         initial: value,
         rules,
         name,
@@ -127,7 +130,13 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         autoComplete,
         errors,
     };
-    return (options ? { ...props, options, multiple } : props) as SimpleFieldState;
+    return (field.options
+        ? {
+            ...props,
+            options: optionMapper(field.options, id, name, key, type),
+            multiple,
+        }
+        : props) as SimpleFieldState;
 };
 
 const optionMapper = (options: string[] | Option[], id: string, name: string, key: string, type: string): MappedOption[] => {

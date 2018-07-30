@@ -34,6 +34,7 @@ export const arrayState: StateWithForms =  {
         fields: {
             field1: {
                 key: 'field1',
+                path: 'field1',
                 focused: false,
                 touched: false,
                 changed: false,
@@ -43,6 +44,7 @@ export const arrayState: StateWithForms =  {
                 default: {
                     nestedField1: {
                         key: 'nestedField1',
+                        path: 'field1.nestedField1',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -65,6 +67,7 @@ export const arrayState: StateWithForms =  {
                     },
                     nestedField2: {
                         key: 'nestedField2',
+                        path: 'field1.nestedField2',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -89,7 +92,8 @@ export const arrayState: StateWithForms =  {
                 fields: [
                     {
                         nestedField1: {
-                            key: 'nestedField1[0]',
+                            key: '[0].nestedField1',
+                            path: 'field1[0].nestedField1',
                             focused: false,
                             touched: false,
                             changed: false,
@@ -111,7 +115,8 @@ export const arrayState: StateWithForms =  {
                             errors: [],
                         },
                         nestedField2: {
-                            key: 'nestedField2[0]',
+                            key: '[0].nestedField2',
+                            path: 'field1[0].nestedField2',
                             focused: false,
                             touched: false,
                             changed: false,

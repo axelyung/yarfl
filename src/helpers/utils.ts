@@ -1,23 +1,11 @@
-import * as _append from 'ramda/src/append';
-import * as _assocPath from 'ramda/src/assocPath';
-import * as _merge from 'ramda/src/merge';
-import * as _mergeDeepRight from 'ramda/src/mergeDeepRight';
-import * as _omit from 'ramda/src/omit';
-import * as _path from 'ramda/src/path';
-import * as _pick from 'ramda/src/pick';
-import * as _remove from 'ramda/src/remove';
-
-const R = {
-    assocPath: _assocPath,
-    merge: _merge,
-    mergeDeepRight: _mergeDeepRight,
-    omit: _omit,
-    pick: _pick,
-    remove: _remove,
-    append: _append,
-    path: _path,
-};
-
+import _camelCase from 'lodash-es/camelCase';
+import _capitalize from 'lodash-es/capitalize';
+import _get from 'lodash-es/get';
+import _kebabCase from 'lodash-es/kebabCase';
+import _merge from 'lodash-es/merge';
+import _omit from 'lodash-es/omit';
+import _pick from 'lodash-es/pick';
+import _set from 'lodash-es/set';
 import {
     ArrayFieldState,
     CompleteConfig,
@@ -39,19 +27,25 @@ export const firstDefined = (...args: any[]) => {
 };
 
 const caseFnWrapper = (fn: (str: string) => string) => (str: string) => {
-    const seperated = str.replace(/(\d+)/, ' $1 ');
-    return fn(seperated);
+    return fn(str.replace(/(\d+)/, ' $1 '));
 };
 
-// tslint:disable:no-var-requires
-export const capitalize = caseFnWrapper(require('sentence-case'));
+export const capitalize = caseFnWrapper((str: string) => {
+    const words = _kebabCase(str).split('-');
+    return [
+        _capitalize(words[0]),
+        ...words.slice(1),
+    ].join(' ');
 
-export const titleCase = caseFnWrapper(require('title-case'));
+});
 
-export const kebabCase = caseFnWrapper(require('param-case'));
+export const titleCase = caseFnWrapper((str: string) => {
+    return _kebabCase(str).split('-').map(_capitalize).join(' ');
+});
 
-export const camelCase = caseFnWrapper(require('camel-case'));
-// tslint:enable:no-var-requires
+export const kebabCase = caseFnWrapper(_kebabCase);
+
+export const camelCase = caseFnWrapper(_camelCase);
 
 export const isNonEmptyArray = (test: any) => !!(test && Array.isArray(test) && test.length);
 
@@ -76,33 +70,35 @@ export const parseKey = (key: string, endWith?: string | string[]) => {
     return [key];
 };
 
-export const removeAt = <T>(arr: T[], index: number, count = 1) => R.remove(index, count, arr);
+export const removeAt = <T>(arr: T[], index: number, count = 1) => arr.splice(index, count);
 
-export const append = <T>(arr: T[], value: T) => R.append(value, arr);
+export const append = <T>(arr: T[], value: T) => [...arr, value];
 
-export const getIn = <T>(obj: object | any[], path: (string|number)[]) => R.path<T>(path, obj);
+export const getIn = (obj: object | any[], path: (string|number)[]) => _get(obj, path);
 
-export const setInWithKey = <T>(state: T, key: string, target: string, value: any) => {
+export const setInWithKey = <T extends object>(state: T, key: string, target: string, value: any) => {
     const fieldPath = ['fields', ...parseKey(key), target];
-    return R.assocPath(fieldPath, value, state);
+    return _set(state, fieldPath, value) as T;
 };
 
-export const setInWithPath = <T>(obj: T, path: (string|number)[], value: any) => R.assocPath(path, value, obj);
+export const setInWithPath = <T extends object>(obj: T, path: (string|number)[], value: any) => {
+    return _set(obj, path, value) as T;
+};
 
 export const mergeIn = <T extends object>(state: T, key: string, value: object): T => {
     const fieldPath = ['fields', ...parseKey(key)];
     const target = getIn(state, fieldPath);
-    const merged = R.merge(target, value);
-    return R.assocPath(fieldPath, merged, state);
+    const merged = _merge(target, value);
+    return _set(state, fieldPath, merged) as T;
 };
 
-export const mergeDeep = R.mergeDeepRight;
+export const mergeDeep = (obj1: object, obj2: object) => _merge(obj1, obj2);
 
 export const mergeDeepIn = <T extends object>(state: T, key: string, value: object) => {
     const fieldPath = ['fields', ...parseKey(key)];
     const target = getIn(state, fieldPath);
-    const merged = mergeDeep(target, value);
-    return R.assocPath(fieldPath, merged, state);
+    const merged = _merge(target, value);
+    return _set(state, fieldPath, merged) as T;
 };
 
 // recursively merges value up the state tree
@@ -199,11 +195,11 @@ const flattenObj = (obj: object, prefix?: string): object => {
 };
 
 export const pick = <T extends object>(target: T, props: (keyof T & string)[]) => {
-    return R.pick(props, target);
+    return _pick(target, props) as Partial<T>;
 };
 
 export const omit = <T extends object>(target: T, props: (keyof T & string)[]) => {
-    return R.omit(props, target);
+    return _omit(target, props);
 };
 
 export const isPromise = (target: any) => {

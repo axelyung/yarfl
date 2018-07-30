@@ -45,6 +45,6 @@ export const registerCustomRules = (customRules: CustomRule[]) => {
     }).some(isAsync => isAsync);
 };
 
-export const reigsterErrorMessages = (messages: Validator.ErrorMessages) => {
+export const registerErrorMessages = (messages: Validator.ErrorMessages) => {
     Validator.setMessages('', messages);
 };

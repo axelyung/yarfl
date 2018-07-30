@@ -1,6 +1,7 @@
 import { SyntheticEvent } from 'react';
 import { InferableComponentEnhancer } from 'react-redux';
 import { Action as ReduxAction, ActionCreator, Reducer as ReduxReducer } from 'redux';
+import Validator from 'validatorjs';
 
 export type InputValue = string | number | boolean | string[] | number[];
 
@@ -63,7 +64,7 @@ type UnspecifiedState = any & object;
 interface FormAttributes {
     action: string;
     name: string;
-    method: 'POST' | 'DELETE' | 'PUT' | 'PATCH';
+    method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
     onSubmit?: () => any;
     onChange?: () => any;
     onInput?: () => any;
@@ -114,6 +115,7 @@ export const FieldType = {
 };
 
 interface StateFieldBase extends Object {
+    path: string;
     fieldType: 'SIMPLE' | 'PARENT' | 'ARRAY';
     changed: boolean;
     touched: boolean;
@@ -291,12 +293,4 @@ export interface FieldBindProps extends InputProps {
     onChange: (e: SyntheticEvent<HTMLInputElement>, value?: any) => void;
     onBlur: () => void;
     onFocus: () => void;
-}
-
-export interface FormProviderProps<S extends object> {
-    render: (props: FormProps<S>) => React.ReactElement<FormProps<S>>;
-}
-
-export interface LocalFormProps<S extends object> extends FormProviderProps<S>  {
-    config: Config<S>;
 }

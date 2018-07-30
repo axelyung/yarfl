@@ -1,4 +1,5 @@
-import * as _path from 'ramda/src/path';
+import _get from 'lodash-es/get';
+import { FormProviderProps } from '../FormProvider';
 import {
     ActionUnknown,
     ActionWithKey,
@@ -8,7 +9,6 @@ import {
     ArrayFieldState,
     Config,
     FieldState,
-    FormProviderProps,
     ParentFieldState,
     SimpleFieldState,
 } from '../typings';
@@ -121,7 +121,7 @@ export const checkFieldType = (field: FieldState): FieldState => {
 };
 
 export const checkPath = (path: string[], target: object | any[], strFormat?: string) => {
-    if (typeof _path(path, target) === 'undefined') {
+    if (typeof _get(target, path) === 'undefined') {
         throwError(
             `The given key '${strFormat || path.join('.')}' does not correspond`,
             `to a defined part of the state tree. Please check that the key is valid`,

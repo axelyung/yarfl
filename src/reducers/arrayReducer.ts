@@ -38,7 +38,7 @@ const createAddArrayFieldReducer = () => (state: FormState, action: ActionUnknow
     const index = fields.length;
     const newField = createNewField(fieldKey, template, index);
     const targetPath = ['fields', ...fieldPath, 'fields'];
-    const target = getIn<any[]>(state, targetPath);
+    const target = getIn(state, targetPath);
     if (!target) {
         return state;
     }
@@ -53,11 +53,13 @@ export const createNewField = <S extends object>(parentKey: string, template: Mo
     }
     return Object.entries(template).reduce((acc, [k, entry]) => {
         const { key: childKey, id } = entry as SimpleFieldState;
+        const key = `[${index}].${childKey}`;
         return {
             ...acc,
             [k]: {
                 ...entry,
-                key: `${childKey}[${index}]`,
+                key,
+                path: `${parentKey}${key}`,
                 id: `${id}-${index}`,
                 name: `${parentKey}[][${childKey}]`,
             },
@@ -69,7 +71,7 @@ const createDeleteArrayFieldReducer = () => (state: FormState, action: ActionUnk
     const { key, index } = checkActionForKeyAndIndex(action);
     const fieldPath = parseKey(key);
     const targetPath = ['fields', ...fieldPath, 'fields'];
-    const target = getIn<any[]>(state, targetPath);
+    const target = getIn(state, targetPath);
     if (!target) {
         return state;
     }
