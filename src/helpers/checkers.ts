@@ -119,13 +119,3 @@ export const checkFieldType = (field: FieldState): FieldState => {
     }
     return throwError('Fields is invalid');
 };
-
-export const checkPath = (path: string[], target: object | any[], strFormat?: string) => {
-    if (typeof _get(target, path) === 'undefined') {
-        throwError(
-            `The given key '${strFormat || path.join('.')}' does not correspond`,
-            `to a defined part of the state tree. Please check that the key is valid`,
-        );
-    }
-    return path;
-};

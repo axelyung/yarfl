@@ -7,7 +7,6 @@ import {
     ArrayFieldProps,
     CompleteConfig,
     FieldBindProps,
-    FieldState,
     FieldType,
     FormBindProps,
     FormProps,
@@ -144,11 +143,11 @@ const createSelect = <S extends object>(config: CompleteConfig) =>
         const props = selectField(state, key) as any;
         if (!props) {
             throwError(
-                `Key '${keyStr}' does not correspond to an existing node in the state.`,
+                `Key '${key}' does not correspond to an existing node in the state.`,
                 `Check spelling and/or that the parent key is included.`,
             );
         }
-        const methods = createFieldMethods(config)(keyStr, props, dispatchers);
+        const methods = createFieldMethods(config)(key, state, dispatchers);
         const { showErrors, extra, fields, fieldType } = props;
         const errors = fieldType === FieldType.Simple
             ? props.errors
@@ -180,29 +179,35 @@ const createSelect = <S extends object>(config: CompleteConfig) =>
     };
 
 const createFieldMethods = (config: CompleteConfig) =>
-    (key: string, props: FieldState, dispatchers: any) => {
+    (key: string, state: FormState, dispatchers: any) => {
+        const props = selectField(state, key);
         const common = {
             set: (value: any) => dispatchers.updateField(key, value),
             clear: () => dispatchers.clearField(key),
             reset: () => dispatchers.resetField(key),
             showErrors: (showErrors?: boolean) =>
-                dispatchers.showFieldErrors(key, showErrors),
+            dispatchers.showFieldErrors(key, showErrors),
         };
-        if (props.fieldType === FieldType.Array) {
-            return {
-                ...common,
-                add: () => dispatchers.addArrayField(key),
-                del: (index: number) => dispatchers.deleteArrayField(key, index),
-            };
+        switch (props.fieldType) {
+            case FieldType.Array:
+                return {
+                    ...common,
+                    add: () => dispatchers.addArrayField(key),
+                    del: (index: number) => dispatchers.deleteArrayField(key, index),
+                };
+            case FieldType.Parent:
+                return {
+                    ...common,
+                    select: createSelect(config)(state, dispatchers, key),
+                };
+            case FieldType.Simple:
+            default:
+                const { getter = v => v } = selectField(config, key, true) || {};
+                return {
+                    ...common,
+                    bind: createFieldBinder(key, props, dispatchers, getter),
+                };
         }
-        if (props.fieldType === FieldType.Simple) {
-            const { getter = v => v } = selectField(config, key, true) || {};
-            return {
-                ...common,
-                bind: createFieldBinder(key, props, dispatchers, getter),
-            };
-        }
-        return common;
     };
 
 const createFieldBinder = (key: string, props: any, dispatchers: any, getter: (value: any) => any) =>

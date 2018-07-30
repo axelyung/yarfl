@@ -21,7 +21,6 @@ import {
     ParentFieldState,
     SimpleFieldState,
     } from '../typings';
-import { checkPath } from './checkers';
 
 export const firstDefined = (...args: any[]) => {
     for (const i in args) {
@@ -123,7 +122,10 @@ export const selectField = <T extends FormState | CompleteConfig>(target: T, key
     const path = ['fields', ...parseKey(key)];
     const field = getIn(target, path);
     if (typeof field === 'undefined' && !graceful) {
-        checkPath(path, target, key);
+        throwError(
+            `The given key '${key || path.join('.')}' does not correspond`,
+            `to a defined part of the state tree. Please check that the key is valid`,
+        );
     }
     return field as any;
 };
