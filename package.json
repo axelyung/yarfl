@@ -13,6 +13,12 @@
     "type": "git",
     "url": "https://github.com/axelyung/yarfl.git"
   },
+  "release": {
+    "branch": "next"
+  },
+  "publishConfig": {
+    "tag": "next"
+  },
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/yarfl.min.js",
