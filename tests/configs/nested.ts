@@ -42,6 +42,7 @@ export const nestedState: StateWithForms =  {
         fields: {
             parent1: {
                 key: 'parent1',
+                path: 'parent1',
                 focused: false,
                 touched: false,
                 changed: false,
@@ -50,6 +51,7 @@ export const nestedState: StateWithForms =  {
                 fields: {
                     child1: {
                         key: 'child1',
+                        path: 'parent1.child1',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -74,6 +76,7 @@ export const nestedState: StateWithForms =  {
                     },
                     child2: {
                         key: 'child2',
+                        path: 'parent1.child2',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -82,6 +85,7 @@ export const nestedState: StateWithForms =  {
                         fields: {
                             grandchild1: {
                                 key: 'grandchild1',
+                                path: 'parent1.child2.grandchild1',
                                 focused: false,
                                 touched: false,
                                 changed: false,
@@ -106,6 +110,7 @@ export const nestedState: StateWithForms =  {
                             },
                             grandchild2: {
                                 key: 'grandchild2',
+                                path: 'parent1.child2.grandchild2',
                                 focused: false,
                                 touched: false,
                                 changed: false,

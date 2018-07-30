@@ -613,13 +613,15 @@ const nodeActions = (creators: any, key: string) => ({
             const template = getIn(initialState, prefix('fields.arrayField.default'));
             const newField1 = mergeDeep(template, {
                 arrayField1: {
-                    key: 'arrayField1[1]',
+                    key: '[1].arrayField1',
+                    path: 'arrayField[1].arrayField1',
                     name: 'arrayField[][arrayField1]',
                     id: 'array-field-1-1',
                     errors: ['The array field 1 field is required.'],
                 },
                 arrayField2: {
-                    key: 'arrayField2[1]',
+                    key: '[1].arrayField2',
+                    path: 'arrayField[1].arrayField2',
                     name: 'arrayField[][arrayField2]',
                     id: 'array-field-2-1',
                     errors: ['The array field 2 must be at least 18.'],
