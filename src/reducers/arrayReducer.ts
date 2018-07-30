@@ -53,11 +53,13 @@ export const createNewField = <S extends object>(parentKey: string, template: Mo
     }
     return Object.entries(template).reduce((acc, [k, entry]) => {
         const { key: childKey, id } = entry as SimpleFieldState;
+        const key = `[${index}].${childKey}`;
         return {
             ...acc,
             [k]: {
                 ...entry,
-                key: `${childKey}[${index}]`,
+                key,
+                path: `${parentKey}${key}`,
                 id: `${id}-${index}`,
                 name: `${parentKey}[][${childKey}]`,
             },
