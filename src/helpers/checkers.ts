@@ -1,4 +1,5 @@
 import _get from 'lodash-es/get';
+import { FormProviderProps } from '../FormProvider';
 import {
     ActionUnknown,
     ActionWithKey,
@@ -8,7 +9,6 @@ import {
     ArrayFieldState,
     Config,
     FieldState,
-    FormProviderProps,
     ParentFieldState,
     SimpleFieldState,
 } from '../typings';

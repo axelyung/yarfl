@@ -2,21 +2,14 @@ import * as React from 'react';
 import { InferableComponentEnhancer } from 'react-redux';
 import { combineReducers, compose } from 'redux';
 import ThunkFactory from './actions/ThunkFactory';
-import { connectDirectly } from './connect';
-import { FormProviderComponent } from './FormProvider';
+import { formConnect } from './connect';
+import { FormProviderComponent, FormProviderProps } from './FormProvider';
 import { checkConfigs } from './helpers/checkers';
 import { mergeDeep } from './helpers/utils';
-import { registerCustomRules, reigsterErrorMessages } from './helpers/validator';
+import { registerCustomRules, registerErrorMessages } from './helpers/validator';
 import { initializeFormState } from './initializeState';
 import { createReducer } from './reducers';
-import {
-    CompleteConfig,
-    Config,
-    FormProviderProps,
-    FormsConnect,
-    Model,
-    StateWithForms,
-    } from './typings';
+import { CompleteConfig, Config, FormsConnect, Model, StateWithForms } from './typings';
 
 export function init(...configs: Config[]) {
     checkConfigs(configs);
@@ -43,9 +36,12 @@ export function init(...configs: Config[]) {
     }, {}) as any;
     const { reducers, connectors, formProviders } = mergedForms as any;
     const connect = compose(...Object.values(connectors) as InferableComponentEnhancer<any>[]) as FormsConnect;
-    Object.entries(connectors).forEach(([key, connector]: [string, any]) => {
-        connect[key] = connector;
-    });
+    for (const key in connectors) {
+        if (connectors.hasOwnProperty(key)) {
+            connect[key] = connectors[key];
+        }
+    }
+
     // tslint:disable-next-line:variable-name
     const FormProvider = connect(FormProviderComponent) as any;
     Object.entries(formProviders).forEach(([key, formProvider]: [string, any]) => {
@@ -67,12 +63,12 @@ const initForm = <S extends object>(config: Config<S>) => {
         ? registerCustomRules(customRules)
         : false;
     if (errorMessages) {
-        reigsterErrorMessages(errorMessages);
+        registerErrorMessages(errorMessages);
     }
     const configWithDefaults = addDefaultsToConfig(config);
     const initialFormState = initializeFormState(configWithDefaults, isAsync);
     const reducer = createReducer(configWithDefaults, initialFormState);
-    const connect = connectDirectly(configWithDefaults);
+    const connect = formConnect(configWithDefaults);
     const formProvider = connect(FormProviderComponent);
     // TODO: include option to return selectors
     const actionCreators = new ThunkFactory(configWithDefaults).getThunks();
@@ -90,6 +86,7 @@ const initForm = <S extends object>(config: Config<S>) => {
 const addDefaultsToConfig = <S extends object>(config: Config<S>): CompleteConfig<S> => {
     return {
         // useLang?: string;
+        action: '',
         method: 'POST',
         customRules: [],
         errorMessages: {},
@@ -108,8 +105,9 @@ const addDefaultsToConfig = <S extends object>(config: Config<S>): CompleteConfi
         showErrorsOnClear: false,
         showErrorsOnReset: false,
         autoParseNumbers: true,
-        skipDefaults: false,
+        addDefaults: true,
+        extra: {},
         mapState: (state: any) => state[config.name],
         ...config,
-    } as CompleteConfig<S>;
+    };
 };
