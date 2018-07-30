@@ -1,11 +1,16 @@
-import _camelCase from 'lodash-es/camelCase';
-import _capitalize from 'lodash-es/capitalize';
-import _get from 'lodash-es/get';
-import _kebabCase from 'lodash-es/kebabCase';
-import _merge from 'lodash-es/merge';
-import _omit from 'lodash-es/omit';
-import _pick from 'lodash-es/pick';
-import _set from 'lodash-es/set';
+// tslint:disable:variable-name no-var-requires
+const _camelCase = require('lodash/camelCase');
+const _capitalize = require('lodash/capitalize');
+const _get = require('lodash/get');
+const _kebabCase = require('lodash/kebabCase');
+const _merge = require('lodash/merge');
+const _omit = require('lodash/omit');
+const _pick = require('lodash/pick');
+// TODO: this must be replaced with something smaller (14.3K!)
+const fpSet = require('lodash/fp/set');
+const _set = (obj, path, val) => fpSet(path, val, obj);
+// tslint:enable:variable-name no-var-requires
+
 import {
     ArrayFieldState,
     CompleteConfig,
