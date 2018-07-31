@@ -1,4 +1,5 @@
-import _isEqual from 'lodash-es/isEqual';
+// tslint:disable-next-line:variable-name no-var-requires
+const _isEqual = require('lodash/isEqual');
 // necessary import format for react
 // see https://stackoverflow.com/questions/44547201/typescript-react-not-importing-correctly
 import * as React from 'react';
