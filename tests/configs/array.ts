@@ -12,7 +12,7 @@ export const arrayConfig: Config<TestState> = {
     fields: {
         field1: {
             multiple: true,
-            fields: {
+            default: {
                 nestedField1: {
                     value: 'value',
                     default: 'default value',
@@ -22,6 +22,10 @@ export const arrayConfig: Config<TestState> = {
                     value: 18,
                 },
             },
+            fields: [{
+                nestedField1: {},
+                nestedField2: {},
+            }],
         },
     },
 };

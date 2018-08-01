@@ -10,19 +10,9 @@ type ConfigType = {
         },
     },
     arrayField: {
-        multiple: true,
-        fields: {
-            arrayField1: {
-                value: 'value',
-                default: 'default',
-
-            },
-            arrayField2: {
-                type: 'number',
-                value: 18,
-            },
-        },
-    },
+        arrayField1: string,
+        arrayField2: number,
+    }[],
 };
 
 export const hybridConfig: Config<ConfigType> = {
@@ -67,7 +57,7 @@ export const hybridConfig: Config<ConfigType> = {
         },
         arrayField: {
             multiple: true,
-            fields: {
+            default: {
                 arrayField1: {
                     value: '',
                     default: 'default',
@@ -79,6 +69,10 @@ export const hybridConfig: Config<ConfigType> = {
                     rules: 'required|min:18',
                 },
             },
+            fields: [{
+                arrayField1: {},
+                arrayField2: {},
+            }],
         },
     },
 };
