@@ -74,7 +74,10 @@ export const parseKey = (key: string, endWith?: string | string[]) => {
     return [key];
 };
 
-export const removeAt = <T>(arr: T[], index: number, count = 1) => arr.splice(index, count);
+export const removeAt = <T>(arr: T[], index: number, count = 1) => [
+    ...arr.slice(0, index),
+    ...arr.slice(index + count),
+];
 
 export const append = <T>(arr: T[], value: T) => [...arr, value];
 
@@ -154,7 +157,6 @@ export const extract = <S extends object>(fields: Model<S, FieldState>, key: key
                     // @ts-ignore
                     return { ...acc, [k]: extract(entry, key, options) };
             }
-            return {};
         }, {}) as S;
     return optionsWithDefaults.flatten
         ? flattenObj(extraction)

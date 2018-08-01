@@ -3,11 +3,12 @@ import { checkActionForKey, checkActionForKeyAndIndex } from '../helpers/checker
 import { append, getIn, parseKey, removeAt, setInWithPath } from '../helpers/utils';
 import {
     ActionUnknown,
+    ArrayFieldState,
     FieldState,
     FormState,
     Model,
     SimpleFieldState,
-    } from '../typings';
+} from '../typings';
 
 export const createArrayReducer = () =>
     (state: FormState, action: ActionUnknown) => {
@@ -70,11 +71,39 @@ export const createNewField = <S extends object>(parentKey: string, template: Mo
 const createDeleteArrayFieldReducer = () => (state: FormState, action: ActionUnknown) => {
     const { key, index } = checkActionForKeyAndIndex(action);
     const fieldPath = parseKey(key);
-    const targetPath = ['fields', ...fieldPath, 'fields'];
+    const targetPath = ['fields', ...fieldPath];
     const target = getIn(state, targetPath);
-    if (!target) {
+    if (!(target || {}).fields) {
         return state;
     }
-    const updatedTarget = removeAt(target, index);
-    return setInWithPath(state, targetPath, updatedTarget);
+    const updatedTarget = {
+        ...target,
+        fields: removeAt(target.fields, index),
+    };
+    const relabeledTarget = relabelFields(updatedTarget);
+    return setInWithPath(state, targetPath, relabeledTarget);
+};
+
+const relabelFields = (fieldState: ArrayFieldState) => {
+    const { fields, key: parentKey, default: template } = fieldState;
+    const updatedFields = fields.map((field, index) => {
+        return Object.entries(field).reduce((acc, [k, subField]) => {
+            const { key: childKey, id } = template[k];
+            const key = `[${index}].${childKey}`;
+            return {
+                ...acc,
+                [k]: {
+                    ...subField,
+                    key,
+                    path: `${parentKey}${key}`,
+                    id: `${id}-${index}`,
+                    name: `${parentKey}[][${childKey}]`,
+                },
+            };
+        }, {});
+    });
+    return {
+        ...fieldState,
+        fields: updatedFields,
+    };
 };
