@@ -64,10 +64,6 @@ export const createFieldReducer = <S extends object>(config: CompleteConfig<S>) 
 
 const parseValue = (config: CompleteConfig) => (state: FormState) => (key: string, value: InputValue) => {
     const typeOfValue = typeof value;
-    const { setter = false } = (selectField(config, key, true) || {});
-    if (setter) {
-        return setter(value);
-    }
     if (typeOfValue === 'number') {
         return value;
     }

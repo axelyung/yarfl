@@ -210,57 +210,59 @@ const createFieldMethods = (config: CompleteConfig) =>
                 };
             case FieldType.Simple:
             default:
-                const { getter = v => v } = selectField(config, key, true) || {};
                 return {
                     ...common,
-                    bind: createFieldBinder(key, props, dispatchers, getter),
+                    bind: createFieldBinder(config)(key, props, dispatchers),
                 };
         }
     };
 
-const createFieldBinder = (key: string, props: any, dispatchers: any, getter: (value: any) => any) =>
-    (): FieldBindProps => {
-        const inputProps = pick(props, [
-            'type',
-            'default',
-            'id',
-            'label',
-            'placeholder',
-            'name',
-            'disabled',
-            'autoFocus',
-            'multiple',
-            'autoComplete',
-        ]) as InputProps;
-        const fetchedValue = getter(props.value);
-        const bindProps = {
-            ...inputProps,
-            value: fetchedValue,
-            onChange: createOnChangeHandler(key, props, dispatchers),
-            onBlur: () => dispatchers.blurField(key),
-            onFocus: () => dispatchers.focusField(key),
+const createFieldBinder = (config: CompleteConfig) =>
+    (key: string, props: any, dispatchers: any) =>
+        (): FieldBindProps => {
+            // tslint:disable-next-line:no-unnecessary-initializer
+            const { setter, getter } = selectField(config, key, true);
+            const inputProps = pick(props, [
+                'type',
+                'default',
+                'id',
+                'label',
+                'placeholder',
+                'name',
+                'disabled',
+                'autoFocus',
+                'multiple',
+                'autoComplete',
+            ]) as InputProps;
+            const fetchedValue = getter ? getter(props.value) : props.value;
+            const bindProps = {
+                ...inputProps,
+                value: fetchedValue,
+                onChange: createOnChangeHandler(key, props, dispatchers, setter),
+                onBlur: () => dispatchers.blurField(key),
+                onFocus: () => dispatchers.focusField(key),
+            };
+            return props.type === 'checkbox'
+                ? { ...bindProps, checked: !!fetchedValue }
+                : bindProps;
         };
-        return props.type === 'checkbox'
-            ? { ...bindProps, checked: !!fetchedValue }
-            : bindProps;
-    };
 
-const createOnChangeHandler = (key, props, dispatchers) =>
+const createOnChangeHandler = (key, props, dispatchers, setter = v => v) =>
     (e: SyntheticEvent<HTMLInputElement>, value?: InputValue) => {
         const { type, multiple } = props;
         if (value !== undefined && value !== null) {
-            return dispatchers.updateField(key, value);
+            return dispatchers.updateField(key, setter(value));
         }
         if (type === 'select' && multiple) {
             const update = Array.from((e.target as any).options)
                 .filter((opt: any) => opt.selected)
                 .map((opt: any) => opt.value);
-            return dispatchers.updateField(key, update);
+            return dispatchers.updateField(key, setter(update));
         }
         const { currentTarget, target } = e;
         const { checked, value: targetValue } = (currentTarget || target) as any;
-        const setValue = type === 'checkbox' ? checked : targetValue;
-        dispatchers.updateField(key, setValue);
+        const checkedValue = setter(type === 'checkbox' ? checked : targetValue);
+        return dispatchers.updateField(key, checkedValue);
     };
 
 const mapOptions = (props: any, methods: any): undefined | MappedOption[] => {
