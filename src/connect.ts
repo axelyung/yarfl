@@ -138,45 +138,52 @@ const createFormBinder = <S extends object>(config: CompleteConfig<S>) =>
 
 // creates a select function to target a specific field in the state
 const createSelect = <S extends object>(config: CompleteConfig) =>
-    (state: FormState<S>, dispatchers: any, prefix?: string) => (keyStr: string) => {
-        const key = prefix ? `${prefix}.${keyStr}` : keyStr;
-        const props = selectField(state, key) as any;
-        if (!props) {
-            throwError(
-                `Key '${key}' does not correspond to an existing node in the state.`,
-                `Check spelling and/or that the parent key is included.`,
-            );
-        }
-        const methods = createFieldMethods(config)(key, state, dispatchers);
-        const { showErrors, extra, fields, fieldType } = props;
-        const errors = fieldType === FieldType.Simple
-            ? props.errors
-            : flatten(Object.values(extract(fields, 'errors', { flatten: true })));
-        const errorCount = errors.length;
-        const valid = !errorCount;
-        const common = {
-            ...props,
-            ...methods,
-            errors,
-            errorCount,
-            valid,
-            extra,
+    (state: FormState<S>, dispatchers: any, prefix?: string) =>
+        (keyStr: string, fromRoot = false) => {
+            const key = fromRoot
+                ? keyStr
+                : prefix && /^\[\d+\]\..+$/.test(keyStr)
+                ? `${prefix}${keyStr}`
+                : prefix
+                ? `${prefix}.${keyStr}`
+                : keyStr;
+            const props = selectField(state, key) as any;
+            if (!props) {
+                throwError(
+                    `Key '${key}' does not correspond to an existing node in the state.`,
+                    `Check spelling and/or that the parent key is included.`,
+                );
+            }
+            const methods = createFieldMethods(config)(key, state, dispatchers);
+            const { showErrors, extra, fields, fieldType } = props;
+            const errors = fieldType === FieldType.Simple
+                ? props.errors
+                : flatten(Object.values(extract(fields, 'errors', { flatten: true })));
+            const errorCount = errors.length;
+            const valid = !errorCount;
+            const common = {
+                ...props,
+                ...methods,
+                errors,
+                errorCount,
+                valid,
+                extra,
+            };
+            // if the field is of array type
+            if (props.fieldType === FieldType.Array) {
+                common.length = fields.length;
+                return common as ArrayFieldProps;
+            }
+            // if the field contains other fields
+            if (props.fieldType === FieldType.Parent) {
+                return common as ParentFieldProps;
+            }
+            // if a "regular" field
+            const errorMessage = showErrors && !valid ? errors[0] : '';
+            // TODO: don't set options if missing
+            const options = mapOptions(props, methods);
+            return { ...common, errorMessage, options } as SimpleFieldProps;
         };
-        // if the field is of array type
-        if (props.fieldType === FieldType.Array) {
-            common.length = fields.length;
-            return common as ArrayFieldProps;
-        }
-        // if the field contains other fields
-        if (props.fieldType === FieldType.Parent) {
-            return common as ParentFieldProps;
-        }
-        // if a "regular" field
-        const errorMessage = showErrors && !valid ? errors[0] : '';
-        // TODO: don't set options if missing
-        const options = mapOptions(props, methods);
-        return { ...common, errorMessage, options } as SimpleFieldProps;
-    };
 
 const createFieldMethods = (config: CompleteConfig) =>
     (key: string, state: FormState, dispatchers: any) => {
@@ -194,6 +201,7 @@ const createFieldMethods = (config: CompleteConfig) =>
                     ...common,
                     add: () => dispatchers.addArrayField(key),
                     del: (index: number) => dispatchers.deleteArrayField(key, index),
+                    select: createSelect(config)(state, dispatchers, key),
                 };
             case FieldType.Parent:
                 return {
