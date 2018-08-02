@@ -1,6 +1,6 @@
 import types from '../actions/types';
 import { checkActionForKey, checkActionForKeyAndIndex } from '../helpers/checkers';
-import { append, getIn, parseKey, removeAt, setInWithPath } from '../helpers/utils';
+import { getIn, parseKey, removeAt, setInWithPath } from '../helpers/utils';
 import {
     ActionUnknown,
     ArrayFieldState,
@@ -43,8 +43,7 @@ const createAddArrayFieldReducer = () => (state: FormState, action: ActionUnknow
     if (!target) {
         return state;
     }
-    const updatedTarget = append(target, newField);
-    return setInWithPath(state, targetPath, updatedTarget);
+    return setInWithPath(state, targetPath, [...target, newField]);
 };
 
 export const createNewField = <S extends object>(parentKey: string, template: Model<S, FieldState>, index: number) => {

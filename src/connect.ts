@@ -221,7 +221,7 @@ const createFieldBinder = (config: CompleteConfig) =>
     (key: string, props: any, dispatchers: any) =>
         (): FieldBindProps => {
             // tslint:disable-next-line:no-unnecessary-initializer
-            const { setter, getter } = selectField(config, key, true);
+            const field = selectField(config, key, true) || {};
             const inputProps = pick(props, [
                 'type',
                 'default',
@@ -234,11 +234,13 @@ const createFieldBinder = (config: CompleteConfig) =>
                 'multiple',
                 'autoComplete',
             ]) as InputProps;
-            const fetchedValue = getter ? getter(props.value) : props.value;
+            const fetchedValue = field.getter
+                ? field.getter(props.value)
+                : props.value;
             const bindProps = {
                 ...inputProps,
                 value: fetchedValue,
-                onChange: createOnChangeHandler(key, props, dispatchers, setter),
+                onChange: createOnChangeHandler(key, props, dispatchers, field.setter),
                 onBlur: () => dispatchers.blurField(key),
                 onFocus: () => dispatchers.focusField(key),
             };
