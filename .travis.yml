@@ -17,5 +17,6 @@ after_success:
       then yarn gh-pages -d _book -r https://$GH_TOKEN@github.com/axelyung/yarfl.git;
     fi
 branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
+  only:
+    - master
+    - next
