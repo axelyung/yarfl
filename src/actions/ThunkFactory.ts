@@ -220,12 +220,12 @@ export default class ThunkFactory {
                 return dispatch(this.validateField(key));
             }
         },
-        addArrayField: (key: string) => (dispatch, getState) => {
+        addArrayField: (key: string) => async (dispatch, getState) => {
             const action = this.creators.addArrayField(key);
-            dispatch(action);
-            const newField = selectField(this.selector(getState), key);
-            const index = newField.fields.length - 1;
-            const keys = Object.keys(newField.fields[index]).map(fieldKey => `${key}[${index}].${fieldKey}`);
+            await dispatch(action);
+            const arrayField = selectField(this.selector(getState), key);
+            const index = arrayField.fields.length - 1;
+            const keys = Object.keys(arrayField.fields[index]).map(fieldKey => `${key}[${index}].${fieldKey}`);
             return Promise.all(keys.map(k => dispatch(this.postAction(this.creators.addArrayField(k)))));
         },
         deleteArrayField: (key: string, index: number) => (dispatch) => {

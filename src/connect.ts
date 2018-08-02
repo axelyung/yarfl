@@ -138,45 +138,52 @@ const createFormBinder = <S extends object>(config: CompleteConfig<S>) =>
 
 // creates a select function to target a specific field in the state
 const createSelect = <S extends object>(config: CompleteConfig) =>
-    (state: FormState<S>, dispatchers: any, prefix?: string) => (keyStr: string) => {
-        const key = prefix ? `${prefix}.${keyStr}` : keyStr;
-        const props = selectField(state, key) as any;
-        if (!props) {
-            throwError(
-                `Key '${key}' does not correspond to an existing node in the state.`,
-                `Check spelling and/or that the parent key is included.`,
-            );
-        }
-        const methods = createFieldMethods(config)(key, state, dispatchers);
-        const { showErrors, extra, fields, fieldType } = props;
-        const errors = fieldType === FieldType.Simple
-            ? props.errors
-            : flatten(Object.values(extract(fields, 'errors', { flatten: true })));
-        const errorCount = errors.length;
-        const valid = !errorCount;
-        const common = {
-            ...props,
-            ...methods,
-            errors,
-            errorCount,
-            valid,
-            extra,
+    (state: FormState<S>, dispatchers: any, prefix?: string) =>
+        (keyStr: string, fromRoot = false) => {
+            const key = fromRoot
+                ? keyStr
+                : prefix && /^\[\d+\]\..+$/.test(keyStr)
+                ? `${prefix}${keyStr}`
+                : prefix
+                ? `${prefix}.${keyStr}`
+                : keyStr;
+            const props = selectField(state, key) as any;
+            if (!props) {
+                throwError(
+                    `Key '${key}' does not correspond to an existing node in the state.`,
+                    `Check spelling and/or that the parent key is included.`,
+                );
+            }
+            const methods = createFieldMethods(config)(key, state, dispatchers);
+            const { showErrors, extra, fields, fieldType } = props;
+            const errors = fieldType === FieldType.Simple
+                ? props.errors
+                : flatten(Object.values(extract(fields, 'errors', { flatten: true })));
+            const errorCount = errors.length;
+            const valid = !errorCount;
+            const common = {
+                ...props,
+                ...methods,
+                errors,
+                errorCount,
+                valid,
+                extra,
+            };
+            // if the field is of array type
+            if (props.fieldType === FieldType.Array) {
+                common.length = fields.length;
+                return common as ArrayFieldProps;
+            }
+            // if the field contains other fields
+            if (props.fieldType === FieldType.Parent) {
+                return common as ParentFieldProps;
+            }
+            // if a "regular" field
+            const errorMessage = showErrors && !valid ? errors[0] : '';
+            // TODO: don't set options if missing
+            const options = mapOptions(props, methods);
+            return { ...common, errorMessage, options } as SimpleFieldProps;
         };
-        // if the field is of array type
-        if (props.fieldType === FieldType.Array) {
-            common.length = fields.length;
-            return common as ArrayFieldProps;
-        }
-        // if the field contains other fields
-        if (props.fieldType === FieldType.Parent) {
-            return common as ParentFieldProps;
-        }
-        // if a "regular" field
-        const errorMessage = showErrors && !valid ? errors[0] : '';
-        // TODO: don't set options if missing
-        const options = mapOptions(props, methods);
-        return { ...common, errorMessage, options } as SimpleFieldProps;
-    };
 
 const createFieldMethods = (config: CompleteConfig) =>
     (key: string, state: FormState, dispatchers: any) => {
@@ -194,6 +201,7 @@ const createFieldMethods = (config: CompleteConfig) =>
                     ...common,
                     add: () => dispatchers.addArrayField(key),
                     del: (index: number) => dispatchers.deleteArrayField(key, index),
+                    select: createSelect(config)(state, dispatchers, key),
                 };
             case FieldType.Parent:
                 return {
@@ -202,57 +210,61 @@ const createFieldMethods = (config: CompleteConfig) =>
                 };
             case FieldType.Simple:
             default:
-                const { getter = v => v } = selectField(config, key, true) || {};
                 return {
                     ...common,
-                    bind: createFieldBinder(key, props, dispatchers, getter),
+                    bind: createFieldBinder(config)(key, props, dispatchers),
                 };
         }
     };
 
-const createFieldBinder = (key: string, props: any, dispatchers: any, getter: (value: any) => any) =>
-    (): FieldBindProps => {
-        const inputProps = pick(props, [
-            'type',
-            'default',
-            'id',
-            'label',
-            'placeholder',
-            'name',
-            'disabled',
-            'autoFocus',
-            'multiple',
-            'autoComplete',
-        ]) as InputProps;
-        const fetchedValue = getter(props.value);
-        const bindProps = {
-            ...inputProps,
-            value: fetchedValue,
-            onChange: createOnChangeHandler(key, props, dispatchers),
-            onBlur: () => dispatchers.blurField(key),
-            onFocus: () => dispatchers.focusField(key),
+const createFieldBinder = (config: CompleteConfig) =>
+    (key: string, props: any, dispatchers: any) =>
+        (): FieldBindProps => {
+            // tslint:disable-next-line:no-unnecessary-initializer
+            const field = selectField(config, key, true) || {};
+            const inputProps = pick(props, [
+                'type',
+                'default',
+                'id',
+                'label',
+                'placeholder',
+                'name',
+                'disabled',
+                'autoFocus',
+                'multiple',
+                'autoComplete',
+            ]) as InputProps;
+            const fetchedValue = field.getter
+                ? field.getter(props.value)
+                : props.value;
+            const bindProps = {
+                ...inputProps,
+                value: fetchedValue,
+                onChange: createOnChangeHandler(key, props, dispatchers, field.setter),
+                onBlur: () => dispatchers.blurField(key),
+                onFocus: () => dispatchers.focusField(key),
+            };
+            return props.type === 'checkbox'
+                ? { ...bindProps, checked: !!fetchedValue }
+                : bindProps;
         };
-        return props.type === 'checkbox'
-            ? { ...bindProps, checked: !!fetchedValue }
-            : bindProps;
-    };
 
-const createOnChangeHandler = (key, props, dispatchers) =>
+const createOnChangeHandler = (key, props, dispatchers, setter = v => v) =>
     (e: SyntheticEvent<HTMLInputElement>, value?: InputValue) => {
         const { type, multiple } = props;
         if (value !== undefined && value !== null) {
-            return dispatchers.updateField(key, value);
+            return dispatchers.updateField(key, setter(value));
         }
         if (type === 'select' && multiple) {
             const update = Array.from((e.target as any).options)
                 .filter((opt: any) => opt.selected)
                 .map((opt: any) => opt.value);
-            return dispatchers.updateField(key, update);
+            return dispatchers.updateField(key, setter(update));
         }
         const { currentTarget, target } = e;
         const { checked, value: targetValue } = (currentTarget || target) as any;
-        const setValue = type === 'checkbox' ? checked : targetValue;
-        dispatchers.updateField(key, setValue);
+        const checkedValue = setter(type === 'checkbox' ? checked : targetValue);
+        return dispatchers.updateField(key, checkedValue);
     };
 
 const mapOptions = (props: any, methods: any): undefined | MappedOption[] => {

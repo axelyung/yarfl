@@ -1,5 +1,5 @@
 import creatorFactory from './actions/creatorFactory';
-import { camelCase, firstDefined, kebabCase, titleCase } from './helpers/utils';
+import { camelCase, firstDefined, kebabCase, mergeDeep, titleCase } from './helpers/utils';
 import { validatorFactory } from './helpers/validator';
 import { createNewField } from './reducers/arrayReducer';
 import { formShowErrorsReducer, formValidateReducer } from './reducers/formReducer';
@@ -78,17 +78,21 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         showErrors: false,
         extra: field.extra || {},
     };
+    if (Array.isArray(field.fields)) {
+        // field.fields && field.multiple implies array field
+        const dfault = initFields(field.default as any, addDefaults, path);
+        return {
+            ...common,
+            fieldType: FieldType.Array,
+            default: dfault,
+            fields: field.fields.map((f, index) => {
+                const newField = createNewField(key, dfault, index);
+                return mergeDeep(newField, f);
+            }),
+        } as ArrayFieldState;
+    }
     if (field.fields) {
         const fields = initFields(field.fields, addDefaults, path);
-        if (field.multiple) {
-            // field.fields && field.multiple implies array field
-            return {
-                ...common,
-                fieldType: FieldType.Array,
-                default: fields,
-                fields: [createNewField(key, fields, 0)],
-            } as ArrayFieldState;
-        }
         return { ...common, fields, fieldType: FieldType.Parent } as any;
     }
     const errors: string[] = [];

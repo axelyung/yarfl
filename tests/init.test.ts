@@ -13,7 +13,7 @@ import {
     shallowConfig,
     shallowState,
     } from './configs';
-import { expectFunction, expectObject, timer } from './helpers/utils';
+import { expectFunction, expectObject, printObj, timer } from './helpers/utils';
 
 const testObjects = [{
     config: shallowConfig,
