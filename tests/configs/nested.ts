@@ -1,7 +1,7 @@
 import { Config, StateWithForms } from 'src/typings';
 
 type NestedState = {
-    parent1: {
+    parent: {
         child1: string,
         child2: {
             grandchild1: string,
@@ -13,7 +13,7 @@ type NestedState = {
 export const nestedConfig: Config<NestedState> = {
     name: 'nestedForm',
     fields: {
-        parent1: {
+        parent: {
             fields: {
                 child1: {
                     rules: 'required',
@@ -40,9 +40,9 @@ export const nestedState: StateWithForms =  {
         name: 'nestedForm',
         method: 'POST',
         fields: {
-            parent1: {
-                key: 'parent1',
-                path: 'parent1',
+            parent: {
+                key: 'parent',
+                path: 'parent',
                 focused: false,
                 touched: false,
                 changed: false,
@@ -51,7 +51,7 @@ export const nestedState: StateWithForms =  {
                 fields: {
                     child1: {
                         key: 'child1',
-                        path: 'parent1.child1',
+                        path: 'parent.child1',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -76,7 +76,7 @@ export const nestedState: StateWithForms =  {
                     },
                     child2: {
                         key: 'child2',
-                        path: 'parent1.child2',
+                        path: 'parent.child2',
                         focused: false,
                         touched: false,
                         changed: false,
@@ -85,7 +85,7 @@ export const nestedState: StateWithForms =  {
                         fields: {
                             grandchild1: {
                                 key: 'grandchild1',
-                                path: 'parent1.child2.grandchild1',
+                                path: 'parent.child2.grandchild1',
                                 focused: false,
                                 touched: false,
                                 changed: false,
@@ -110,7 +110,7 @@ export const nestedState: StateWithForms =  {
                             },
                             grandchild2: {
                                 key: 'grandchild2',
-                                path: 'parent1.child2.grandchild2',
+                                path: 'parent.child2.grandchild2',
                                 focused: false,
                                 touched: false,
                                 changed: false,

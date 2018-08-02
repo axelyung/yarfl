@@ -8,9 +8,10 @@ import {
     mountNamedConnectedComponent,
     mountNamedFormProviderComponent,
 } from './helpers/components';
+import { checkArrayField, checkParentField } from './helpers/utils';
 import {
-    checkFieldProps,
     checkFormProps,
+    checkSimpleField,
     expectToThrow,
     mergeDeepIn,
     mergeIn,
@@ -55,9 +56,28 @@ Object.entries(providers).forEach(([name, mounter]) => {
 
             // TODO write test for other fields
             it(`formProp select() should return field props when given valid key`, () => {
-                const fieldProps = component.getFormProps().select('basicField');
-                expect(fieldProps).toBeDefined();
-                checkFieldProps(fieldProps);
+                const { select } = component.getFormProps();
+                checkSimpleField(select('basicField'));
+                checkParentField(select('parent'));
+                checkSimpleField(select('parent.child1'));
+                checkParentField(select('parent.child2'));
+                checkSimpleField(select('parent.child2.grandchild1'));
+                checkSimpleField(select('parent.child2.grandchild2'));
+                checkArrayField(select('arrayField'));
+                checkSimpleField(select('arrayField[0].arrayField1'));
+                checkSimpleField(select('arrayField[0].arrayField2'));
+            });
+
+            it(`chaining select() should return field props when given valid keys`, () => {
+                const parent = component.getFormProps().select('parent');
+                checkParentField(parent);
+                checkSimpleField(parent.select('child1'));
+                expectToThrow(() => parent.select('invalidKey'));
+                const child2 = parent.select('child2');
+                checkParentField(child2);
+                expectToThrow(() => child2.select('invalidKey'));
+                checkSimpleField(child2.select('grandchild1'));
+                checkSimpleField(child2.select('grandchild2'));
             });
 
             it('formProp set() should update state', () => {
