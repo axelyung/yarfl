@@ -32,7 +32,8 @@ export const createFieldReducer = <S extends object>(config: CompleteConfig<S>) 
             case types.FIELD_BLURRED:
             case types.FIELD_CLEAR:
             case types.FIELD_RESET:
-            case types.FIELD_VALIDATE:
+            case types.FIELD_VALIDATE_START:
+            case types.FIELD_VALIDATE_END:
             case types.FIELD_SHOW_ERRORS:
                 break;
             default:
@@ -51,11 +52,11 @@ export const createFieldReducer = <S extends object>(config: CompleteConfig<S>) 
                 return createClearFieldReducer()(state, actionWithKey);
             case types.FIELD_RESET:
                 return createResetFieldReducer()(state, actionWithKey);
-            case types.FIELD_VALIDATE:
-                // TODO
-                return createValidateFieldReducer()(state, actionWithKey as ValidateAction<true>);
+            case types.FIELD_VALIDATE_START:
+                return createValidateFieldStartReducer()(state, actionWithKey);
+            case types.FIELD_VALIDATE_END:
+                return createValidateFieldEndReducer()(state, actionWithKey as ValidateAction<true>);
             case types.FIELD_SHOW_ERRORS:
-                // TODO
                 return createShowFieldErrorsReducer()(state, actionWithKey as ShowErrorsAction<true>);
             default:
                 return state;
@@ -154,10 +155,14 @@ export const createResetFieldReducer = () =>
             });
     };
 
-export const createValidateFieldReducer = () => (state: FormState, action: ValidateAction<true>) => {
+export const createValidateFieldStartReducer = () => (state: FormState, action: ActionWithKey) => {
+    return setInWithKey(state, action.key, 'validating', true);
+};
+
+export const createValidateFieldEndReducer = () => (state: FormState, action: ValidateAction<true>) => {
     const { key, validator } = action;
-    const fieldErrors = validator.errors.get(key);
-    return setInWithKey(state, key, 'errors', fieldErrors);
+    const updatedErrors = setInWithKey(state, key, 'errors', validator.errors.get(key));
+    return setInWithKey(updatedErrors, key, 'validating', false);
 };
 
 export const createShowFieldErrorsReducer = () => (state: FormState, action: ShowErrorsAction<true>) => {

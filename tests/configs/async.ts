@@ -52,6 +52,7 @@ export const asyncState: StateWithForms = {
                 initial: 'username',
                 rules: 'userName',
                 name: 'userName',
+                validating: false,
                 id: 'field_1',
                 type: 'text',
                 label: 'Field 1',

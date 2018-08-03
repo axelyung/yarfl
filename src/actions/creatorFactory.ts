@@ -1,5 +1,42 @@
-import { ActionCreators, CompleteConfig, InputValue } from '../typings';
+import { ActionCreator } from 'redux';
+import {
+    Action,
+    ActionWithKey,
+    ActionWithKeyAndValue,
+    ActionWithValue,
+    CompleteConfig,
+    InputValue,
+    Model,
+    ShowErrorsAction,
+    ValidateAction,
+} from '../typings';
 import types from './types';
+
+export interface ActionCreators extends Model<{}, ActionCreator<Action>> {
+    updateForm: (value: object) => ActionWithValue<object>;
+    clearForm: () => Action;
+    resetForm: () => Action;
+    validateForm: (validator: Validator.Validator<any>) => ValidateAction<false>;
+    showFormErrors: (showErrors: boolean) => ShowErrorsAction<false>;
+
+    updateNode: (key: string, value: object) => ActionWithKeyAndValue<object>;
+    clearNode: (key: string) => ActionWithKey;
+    resetNode: (key: string) => ActionWithKey;
+    validateNode: (key: string, validator: Validator.Validator<any>) => ValidateAction<true>;
+    showNodeErrors: (key: string, showErrors: boolean) => ShowErrorsAction<true>;
+
+    updateField: (key: string, value: InputValue) => ActionWithKeyAndValue<InputValue>;
+    focusField: (key: string) => ActionWithKey;
+    blurField: (key: string) => ActionWithKey;
+    clearField: (key: string) => ActionWithKey;
+    resetField: (key: string) => ActionWithKey;
+    validateFieldStart: (key: string) => ActionWithKey;
+    validateFieldEnd: (key: string, validator: Validator.Validator<any>) => ValidateAction<true>;
+    showFieldErrors: (key: string, showErrors: boolean) => ShowErrorsAction<true>;
+
+    addArrayField: (key: string) => ActionWithKey;
+    deleteArrayField: (key: string, index: number) => ActionWithKey;
+}
 
 export default <S extends Object = any>(config: CompleteConfig<S>): ActionCreators => {
     const formName = config.name;
@@ -84,8 +121,13 @@ export default <S extends Object = any>(config: CompleteConfig<S>): ActionCreato
             formName,
             key,
         }),
-        validateField: (key: string, validator: Validator.Validator<any>) => ({
-            type: types.FIELD_VALIDATE,
+        validateFieldStart: (key: string) => ({
+            type: types.FIELD_VALIDATE_START,
+            formName,
+            key,
+        }),
+        validateFieldEnd: (key: string, validator: Validator.Validator<any>) => ({
+            type: types.FIELD_VALIDATE_END,
             formName,
             key,
             validator,

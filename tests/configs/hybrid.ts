@@ -89,6 +89,7 @@ export const hybridState =  {
                 default: 'default',
                 initial: '',
                 rules: 'required',
+                validating: false,
                 name: 'basicField',
                 id: 'field_1',
                 type: 'text',

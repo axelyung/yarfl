@@ -52,6 +52,7 @@ export const shallowState: StateWithForms = {
                 disabled: false,
                 autoFocus: false,
                 autoComplete: 'field1',
+                validating: false,
                 errors: [
                     'The field 1 field is required.',
                 ],
@@ -60,6 +61,7 @@ export const shallowState: StateWithForms = {
                 key: 'field2',
                 path: 'field2',
                 focused: false,
+                validating: false,
                 touched: false,
                 changed: false,
                 showErrors: false,

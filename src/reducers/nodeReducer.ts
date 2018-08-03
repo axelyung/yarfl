@@ -13,7 +13,7 @@ import {
     createClearFieldReducer,
     createResetFieldReducer,
     createShowFieldErrorsReducer,
-    createValidateFieldReducer,
+    createValidateFieldEndReducer,
     } from './fieldReducer';
 import { formUpdateReducer } from './formReducer';
 
@@ -74,7 +74,7 @@ const nodeValidateReducer = (config: CompleteConfig) => (state: FormState, actio
     const { key, validator } = action;
     const keys = Object.keys(extract(state.fields, 'key', { flatten: true }));
     const nodeKeys = keys.filter(k => k.startsWith(key));
-    const resetActions = nodeKeys.map(k => creatorFactory(config).validateField(k, validator));
+    const resetActions = nodeKeys.map(k => creatorFactory(config).validateFieldEnd(k, validator));
     return resetActions.reduce((updatedState: FormState, fieldAction) =>
-        createValidateFieldReducer()(updatedState, fieldAction), state);
+        createValidateFieldEndReducer()(updatedState, fieldAction), state);
 };

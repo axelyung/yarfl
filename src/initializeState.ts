@@ -18,21 +18,9 @@ import {
 } from './typings';
 
 export const initializeFormState = <S extends object>(config: CompleteConfig<S>, isAsync: boolean = false): FormState<S> => {
-    const {
-        name,
-        extra = {},
-        action = '',
-        method = 'POST',
-    } = config;
+    const { name, extra = {}, action = '', method = '' } = config;
     const fields = initFields(config.fields, !!config.addDefaults, '');
-    const state = {
-        action,
-        name,
-        method,
-        fields,
-        isAsync,
-        extra,
-    };
+    const state = { action, name, method, fields, isAsync, extra };
     return initHooks(config, state as any);
 };
 
@@ -133,6 +121,7 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         autoFocus,
         autoComplete,
         errors,
+        validating: false,
     };
     return (field.options
         ? {

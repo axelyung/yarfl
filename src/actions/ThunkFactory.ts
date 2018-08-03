@@ -1,8 +1,8 @@
 import { Dispatch } from 'redux';
 import { selectField } from '../helpers/utils';
 import { asyncValidatorFactory, validatorFactory } from '../helpers/validator';
-import { Action, ActionCreators, ActionUnknown, CompleteConfig, FormState, InputValue } from '../typings';
-import creatorFactory from './creatorFactory';
+import { Action, ActionUnknown, CompleteConfig, FormState, InputValue } from '../typings';
+import creatorFactory, { ActionCreators } from './creatorFactory';
 import types from './types';
 
 const shouldValidateFactory = (config: CompleteConfig) => (action: Action): boolean => {
@@ -36,7 +36,7 @@ const shouldValidateFactory = (config: CompleteConfig) => (action: Action): bool
         case types.FORM_SHOW_ERRORS:
         case types.FIELD_SHOW_ERRORS:
         case types.FORM_VALIDATE:
-        case types.FIELD_VALIDATE:
+        case types.FIELD_VALIDATE_END:
             return true;
         default:
             return false;
@@ -105,10 +105,12 @@ export default class ThunkFactory {
         (dispatch, getState) => {
             const formState = this.selector(getState);
             if (formState.isAsync) {
-                return this.createValidatorAsync(formState)
-                .then(validator => dispatch(this.creators.validateField(key, validator)));
+                dispatch(this.creators.validateFieldStart(key));
+                return this.createValidatorAsync(formState).then(validator => {
+                    return dispatch(this.creators.validateFieldEnd(key, validator));
+                });
             }
-            dispatch(this.creators.validateField(key, this.createValidator(formState)));
+            dispatch(this.creators.validateFieldEnd(key, this.createValidator(formState)));
         }
 
     private postAction = (action: ActionUnknown) =>
@@ -214,8 +216,7 @@ export default class ThunkFactory {
         },
         validateField: this.validateField,
         showFieldErrors: (key: string, showErrors: boolean = true) => (dispatch) => {
-            const action = this.creators.showFieldErrors(key, showErrors);
-            dispatch(action);
+            dispatch(this.creators.showFieldErrors(key, showErrors));
             if (showErrors) {
                 return dispatch(this.validateField(key));
             }

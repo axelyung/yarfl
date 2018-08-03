@@ -1,6 +1,6 @@
 import { SyntheticEvent } from 'react';
 import { InferableComponentEnhancer } from 'react-redux';
-import { Action as ReduxAction, ActionCreator, Reducer as ReduxReducer } from 'redux';
+import { Action as ReduxAction, Reducer as ReduxReducer } from 'redux';
 import Validator from 'validatorjs';
 
 export type InputValue = string | number | boolean | string[] | number[];
@@ -205,31 +205,6 @@ export interface ActionWithKeyAndIndex extends ActionWithKey {
 export interface ValidateAction<hasKey extends boolean, S = any> extends Action {
     key: hasKey extends true ? string : undefined;
     validator: Validator.Validator<S>;
-}
-
-export interface ActionCreators extends Model<{}, ActionCreator<Action>> {
-    updateForm: (value: object) => ActionWithValue<object>;
-    clearForm: () => Action;
-    resetForm: () => Action;
-    validateForm: (validator: Validator.Validator<any>) => ValidateAction<false>;
-    showFormErrors: (showErrors: boolean) => ShowErrorsAction<false>;
-
-    updateNode: (key: string, value: object) => ActionWithKeyAndValue<object>;
-    clearNode: (key: string) => ActionWithKey;
-    resetNode: (key: string) => ActionWithKey;
-    validateNode: (key: string, validator: Validator.Validator<any>) => ValidateAction<true>;
-    showNodeErrors: (key: string, showErrors: boolean) => ShowErrorsAction<true>;
-
-    updateField: (key: string, value: InputValue) => ActionWithKeyAndValue<InputValue>;
-    focusField: (key: string) => ActionWithKey;
-    blurField: (key: string) => ActionWithKey;
-    clearField: (key: string) => ActionWithKey;
-    resetField: (key: string) => ActionWithKey;
-    validateField: (key: string, validator: Validator.Validator<any>) => ValidateAction<true>;
-    showFieldErrors: (key: string, showErrors: boolean) => ShowErrorsAction<true>;
-
-    addArrayField: (key: string) => ActionWithKey;
-    deleteArrayField: (key: string, index: number) => ActionWithKey;
 }
 
 export type Reducer<S extends object> = ReduxReducer<FormState<S>, ActionUnknown>;

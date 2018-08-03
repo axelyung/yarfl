@@ -68,6 +68,7 @@ export const nestedState: StateWithForms =  {
                         label: 'Child 1',
                         placeholder: 'Child 1',
                         disabled: false,
+                        validating: false,
                         autoFocus: false,
                         autoComplete: 'child1',
                         errors: [
@@ -102,6 +103,7 @@ export const nestedState: StateWithForms =  {
                                 label: 'Grandchild 1',
                                 placeholder: 'Grandchild 1',
                                 disabled: false,
+                                validating: false,
                                 autoFocus: false,
                                 autoComplete: 'grandchild1',
                                 errors: [
@@ -128,6 +130,7 @@ export const nestedState: StateWithForms =  {
                                 placeholder: 'Grandchild 2',
                                 disabled: false,
                                 autoFocus: false,
+                                validating: false,
                                 autoComplete: 'grandchild2',
                                 errors: [],
                             },
