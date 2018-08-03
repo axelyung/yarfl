@@ -1,4 +1,5 @@
 import { extract, flatten, parseKey, pick } from 'src/helpers/utils';
+
 test('extract', () => {
     const input = {
         field1: {
