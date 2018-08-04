@@ -120,6 +120,7 @@ interface StateFieldBase extends Object {
     changed: boolean;
     touched: boolean;
     focused: boolean;
+    blurred: boolean;
 }
 
 interface SimpleField extends StateFieldBase, Field, InputProps {

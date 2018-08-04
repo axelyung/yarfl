@@ -81,6 +81,7 @@ export const hybridState =  {
                 path: 'basicField',
                 focused: false,
                 touched: false,
+                blurred: false,
                 changed: false,
                 showErrors: false,
                 extra: {},

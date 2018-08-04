@@ -171,7 +171,7 @@ export const checkSimpleField = (props: FieldProps) => {
 export const checkParentField = (props: FieldProps) => {
     expect(props).toBeDefined();
     const size = Object.keys(props).length;
-    expect(size).toBe(16);
+    expect(size).toBe(17);
     const {
         set,
         clear,
@@ -193,7 +193,7 @@ export const checkParentField = (props: FieldProps) => {
 export const checkArrayField = (props: FieldProps) => {
     expect(props).toBeDefined();
     const size = Object.keys(props).length;
-    expect(size).toBe(20);
+    expect(size).toBe(21);
     const {
         set,
         clear,

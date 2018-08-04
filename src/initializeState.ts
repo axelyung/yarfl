@@ -63,6 +63,7 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         focused: false,
         touched: false,
         changed: false,
+        blurred: false,
         showErrors: false,
         extra: field.extra || {},
     };

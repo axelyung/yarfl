@@ -8,9 +8,10 @@ import {
     mountNamedConnectedComponent,
     mountNamedFormProviderComponent,
 } from './helpers/components';
-import { checkArrayField, checkParentField } from './helpers/utils';
 import {
+    checkArrayField,
     checkFormProps,
+    checkParentField,
     checkSimpleField,
     expectToThrow,
     mergeDeepIn,
@@ -361,6 +362,7 @@ Object.entries(providers).forEach(([name, mounter]) => {
                 component.getFormProps().select('basicField').bind().onBlur();
                 const expectation = mergeIn(hybridState, 'hybridForm.fields.basicField', {
                     touched: true,
+                    blurred: true,
                     showErrors: true,
                 });
                 expect(component.getState()).toMatchObject(expectation);

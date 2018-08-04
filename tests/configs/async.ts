@@ -43,6 +43,7 @@ export const asyncState: StateWithForms = {
                 path: 'userName',
                 focused: false,
                 touched: false,
+                blurred: false,
                 changed: false,
                 showErrors: false,
                 extra: {},

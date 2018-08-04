@@ -119,10 +119,12 @@ const createBlurFieldReducer = () =>
             ? mergeUp(state, key, {
                 focused: false,
                 touched: true,
+                blurred: true,
             })
             : mergeIn(state, key, {
                 focused: false,
                 touched: true,
+                blurred: true,
             });
     };
 
@@ -147,10 +149,12 @@ export const createResetFieldReducer = () =>
                 changed: false,
                 touched: false,
                 showErrors: false,
+                blurred: false,
             })
             : mergeIn(valueUpdated, key, {
                 changed: false,
                 touched: false,
+                blurred: false,
                 showErrors: false,
             });
     };
