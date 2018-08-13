@@ -1,5 +1,5 @@
 import creatorFactory from './actions/creatorFactory';
-import { camelCase, firstDefined, kebabCase, mergeDeep, titleCase } from './helpers/utils';
+import { camelCase, firstDefined, kebabCase, mergeDeep, pick, titleCase } from './helpers/utils';
 import { validatorFactory } from './helpers/validator';
 import { createNewField } from './reducers/arrayReducer';
 import { formShowErrorsReducer, formValidateReducer } from './reducers/formReducer';
@@ -70,13 +70,17 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
     if (Array.isArray(field.fields)) {
         // field.fields && field.multiple implies array field
         const dfault = initFields(field.default as any, addDefaults, path);
+        const keys = Object.keys(dfault);
         return {
             ...common,
             fieldType: FieldType.Array,
             default: dfault,
             fields: field.fields.map((f, index) => {
                 const newField = createNewField(key, dfault, index);
-                return mergeDeep(newField, f);
+                const mergedField = mergeDeep(newField, f);
+                // fix for issue #17
+                // filters properties not present in default property
+                return pick(mergedField, keys);
             }),
         } as ArrayFieldState;
     }

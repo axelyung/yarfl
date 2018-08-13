@@ -126,10 +126,14 @@ export const selectField = <T extends FormState | CompleteConfig>(target: T, key
     return field as any;
 };
 
+const defaultOptions = { ignoreEmptyStrings: false, flatten: false };
+
 export const extract = <S extends object>(fields: Model<S, FieldState>, key: keyof SimpleFieldState,
     options?: { ignoreEmptyStrings?: boolean, flatten?: boolean }): object => {
-    const defaultOptions = { ignoreEmptyStrings: false, flatten: false };
     const optionsWithDefaults = { ...defaultOptions, ...options };
+    if (typeof fields !== 'object') {
+        throwError(`Trying to perform extraction on a non-object.`);
+    }
     const extraction = Object.entries<FieldState>(fields)
         .reduce<object>((acc, [k, entry]: [string, FieldState]) => {
             switch (entry.fieldType) {
