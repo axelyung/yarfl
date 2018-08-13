@@ -146,11 +146,10 @@ export const checkFormProps = (props: FormProps<any>) => {
     expectObject(extra);
 };
 
-export const checkFieldProps = (props: FieldProps) => {
+export const checkSimpleField = (props: FieldProps) => {
     expect(props).toBeDefined();
     const size = Object.keys(props).length;
     expect(size > 8).toBe(true);
-    expect(props).toBeDefined();
     const {
         set,
         clear,
@@ -167,4 +166,53 @@ export const checkFieldProps = (props: FieldProps) => {
     expectNumber(errorCount);
     expectString(errorMessage);
     expectBoolean(valid);
+};
+
+export const checkParentField = (props: FieldProps) => {
+    expect(props).toBeDefined();
+    const size = Object.keys(props).length;
+    expect(size).toBe(17);
+    const {
+        set,
+        clear,
+        reset,
+        showErrors,
+        errors,
+        errorCount,
+        valid,
+        fields,
+        select,
+    } = props;
+    [set, clear, reset, showErrors, select].map(fn => expectFunction(fn));
+    expectObject(fields);
+    expectArray(errors);
+    expectNumber(errorCount);
+    expectBoolean(valid);
+};
+
+export const checkArrayField = (props: FieldProps) => {
+    expect(props).toBeDefined();
+    const size = Object.keys(props).length;
+    expect(size).toBe(21);
+    const {
+        set,
+        clear,
+        reset,
+        showErrors,
+        errors,
+        errorCount,
+        valid,
+        fields,
+        add,
+        del,
+        select,
+        length,
+    } = props;
+    [set, clear, reset, showErrors, add, del, select].map(fn => expectFunction(fn));
+    expectObject(props.default);
+    expectArray(fields);
+    expectArray(errors);
+    expectNumber(errorCount);
+    expectBoolean(valid);
+    expect(length).toBe(fields.length);
 };

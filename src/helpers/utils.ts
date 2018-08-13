@@ -4,11 +4,9 @@ const _capitalize = require('lodash/capitalize');
 const _get = require('lodash/get');
 const _kebabCase = require('lodash/kebabCase');
 const _merge = require('lodash/merge');
-const _omit = require('lodash/omit');
 const _pick = require('lodash/pick');
-// TODO: this must be replaced with something smaller (14.3K!)
-const fpSet = require('lodash/fp/set');
-const _set = (obj, path, val) => fpSet(path, val, obj);
+const _cloneDeep = require('lodash/cloneDeep');
+const _set = require('lodash/set');
 // tslint:enable:variable-name no-var-requires
 
 import {
@@ -36,11 +34,7 @@ const caseFnWrapper = (fn: (str: string) => string) => (str: string) => {
 
 export const capitalize = caseFnWrapper((str: string) => {
     const words = _kebabCase(str).split('-');
-    return [
-        _capitalize(words[0]),
-        ...words.slice(1),
-    ].join(' ');
-
+    return [_capitalize(words[0]), ...words.slice(1)].join(' ');
 });
 
 export const titleCase = caseFnWrapper((str: string) => {
@@ -79,24 +73,23 @@ export const removeAt = <T>(arr: T[], index: number, count = 1) => [
     ...arr.slice(index + count),
 ];
 
-export const append = <T>(arr: T[], value: T) => [...arr, value];
-
 export const getIn = (obj: object | any[], path: (string|number)[]) => _get(obj, path);
 
 export const setInWithKey = <T extends object>(state: T, key: string, target: string, value: any) => {
     const fieldPath = ['fields', ...parseKey(key), target];
-    return _set(state, fieldPath, value) as T;
+    const result = setInWithPath(state, fieldPath, value) as T;
+    return result;
 };
 
 export const setInWithPath = <T extends object>(obj: T, path: (string|number)[], value: any) => {
-    return _set(obj, path, value) as T;
+    return _set(_cloneDeep(obj), path, value) as T;
 };
 
 export const mergeIn = <T extends object>(state: T, key: string, value: object): T => {
     const fieldPath = ['fields', ...parseKey(key)];
     const target = getIn(state, fieldPath);
     const merged = _merge(target, value);
-    return _set(state, fieldPath, merged) as T;
+    return setInWithPath(state, fieldPath, merged) as T;
 };
 
 export const mergeDeep = (obj1: object, obj2: object) => _merge(obj1, obj2);
@@ -105,7 +98,7 @@ export const mergeDeepIn = <T extends object>(state: T, key: string, value: obje
     const fieldPath = ['fields', ...parseKey(key)];
     const target = getIn(state, fieldPath);
     const merged = _merge(target, value);
-    return _set(state, fieldPath, merged) as T;
+    return setInWithPath(state, fieldPath, merged) as T;
 };
 
 // recursively merges value up the state tree
@@ -133,10 +126,14 @@ export const selectField = <T extends FormState | CompleteConfig>(target: T, key
     return field as any;
 };
 
+const defaultOptions = { ignoreEmptyStrings: false, flatten: false };
+
 export const extract = <S extends object>(fields: Model<S, FieldState>, key: keyof SimpleFieldState,
     options?: { ignoreEmptyStrings?: boolean, flatten?: boolean }): object => {
-    const defaultOptions = { ignoreEmptyStrings: false, flatten: false };
     const optionsWithDefaults = { ...defaultOptions, ...options };
+    if (typeof fields !== 'object') {
+        throwError(`Trying to perform extraction on a non-object.`);
+    }
     const extraction = Object.entries<FieldState>(fields)
         .reduce<object>((acc, [k, entry]: [string, FieldState]) => {
             switch (entry.fieldType) {
@@ -205,15 +202,4 @@ const flattenObj = (obj: object, prefix?: string): object => {
 
 export const pick = <T extends object>(target: T, props: (keyof T & string)[]) => {
     return _pick(target, props) as Partial<T>;
-};
-
-export const omit = <T extends object>(target: T, props: (keyof T & string)[]) => {
-    return _omit(target, props);
-};
-
-export const isPromise = (target: any) => {
-    if (Promise && Promise.resolve) {
-        return Promise.resolve(target) === target;
-    }
-    throw new Error('Promise not supported in your environment');
 };

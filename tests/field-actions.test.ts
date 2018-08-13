@@ -197,6 +197,7 @@ const nodeActions = (creators: any, key: string) => ({
             const expected = mergeDeepIn(initialState, prefix('fields.basicField'), {
                 focused: false,
                 touched: true,
+                blurred: true,
                 showErrors: true,
                 errors: [
                     'The basic field field is required.',
@@ -207,9 +208,11 @@ const nodeActions = (creators: any, key: string) => ({
         it('should blur once nested state', async () => {
             const expected = mergeDeepIn(initialState, prefix('fields.parent'), {
                 touched: true,
+                blurred: true,
                 fields: {
                     child1: {
                         touched: true,
+                        blurred: true,
                         showErrors: true,
                         errors: [
                             'The child 1 field is required.',
@@ -222,12 +225,15 @@ const nodeActions = (creators: any, key: string) => ({
         it('should blur twice nested state', async () => {
             const expected = mergeDeepIn(initialState, prefix('fields.parent'), {
                 touched: true,
+                blurred: true,
                 fields: {
                     child2: {
                         touched: true,
+                        blurred: true,
                         fields: {
                             grandchild1: {
                                 touched: true,
+                                blurred: true,
                                 showErrors: true,
                                 errors: [
                                     'The grandchild 1 format is invalid.',

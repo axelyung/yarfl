@@ -18,7 +18,8 @@ export default {
     FIELD_BLURRED: createTypeKey('FIELD_BLURRED'),
     FIELD_CLEAR: createTypeKey('FIELD_CLEAR'),
     FIELD_RESET: createTypeKey('FIELD_RESET'),
-    FIELD_VALIDATE: createTypeKey('FIELD_VALIDATE'),
+    FIELD_VALIDATE_END: createTypeKey('FIELD_VALIDATE_END'),
+    FIELD_VALIDATE_START: createTypeKey('FIELD_VALIDATE_START'),
     FIELD_SHOW_ERRORS: createTypeKey('FIELD_SHOW_ERRORS'),
 
     ARRAY_FIELD_ADD: createTypeKey('ARRAY_FIELD_ADD'),

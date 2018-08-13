@@ -16,7 +16,7 @@ import {
     createResetFieldReducer,
     createShowFieldErrorsReducer,
     createUpdateFieldReducer,
-    createValidateFieldReducer,
+    createValidateFieldEndReducer,
     } from './fieldReducer';
 
 export const createFormReducer = <S extends object>(config: CompleteConfig<S>) =>
@@ -84,7 +84,7 @@ export const formShowErrorsReducer = (config: CompleteConfig) =>
 export const formValidateReducer = (config: CompleteConfig) =>
     (state: FormState, action: ValidateAction<false>) => {
         const keys = Object.keys(extract(state.fields, 'key', { flatten: true }));
-        const validateActions = keys.map(key => creatorFactory(config).validateField(key, action.validator));
+        const validateActions = keys.map(key => creatorFactory(config).validateFieldEnd(key, action.validator));
         return validateActions.reduce((updatedState: FormState, fieldAction) =>
-            createValidateFieldReducer()(updatedState, fieldAction), state);
+            createValidateFieldEndReducer()(updatedState, fieldAction), state);
     };

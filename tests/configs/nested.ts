@@ -1,7 +1,7 @@
 import { Config, StateWithForms } from 'src/typings';
 
 type NestedState = {
-    parent1: {
+    parent: {
         child1: string,
         child2: {
             grandchild1: string,
@@ -13,7 +13,7 @@ type NestedState = {
 export const nestedConfig: Config<NestedState> = {
     name: 'nestedForm',
     fields: {
-        parent1: {
+        parent: {
             fields: {
                 child1: {
                     rules: 'required',
@@ -40,10 +40,11 @@ export const nestedState: StateWithForms =  {
         name: 'nestedForm',
         method: 'POST',
         fields: {
-            parent1: {
-                key: 'parent1',
-                path: 'parent1',
+            parent: {
+                key: 'parent',
+                path: 'parent',
                 focused: false,
+                blurred: false,
                 touched: false,
                 changed: false,
                 showErrors: false,
@@ -51,9 +52,10 @@ export const nestedState: StateWithForms =  {
                 fields: {
                     child1: {
                         key: 'child1',
-                        path: 'parent1.child1',
+                        path: 'parent.child1',
                         focused: false,
                         touched: false,
+                        blurred: false,
                         changed: false,
                         showErrors: false,
                         extra: {},
@@ -68,6 +70,7 @@ export const nestedState: StateWithForms =  {
                         label: 'Child 1',
                         placeholder: 'Child 1',
                         disabled: false,
+                        validating: false,
                         autoFocus: false,
                         autoComplete: 'child1',
                         errors: [
@@ -76,18 +79,20 @@ export const nestedState: StateWithForms =  {
                     },
                     child2: {
                         key: 'child2',
-                        path: 'parent1.child2',
+                        path: 'parent.child2',
                         focused: false,
                         touched: false,
+                        blurred: false,
                         changed: false,
                         showErrors: false,
                         extra: {},
                         fields: {
                             grandchild1: {
                                 key: 'grandchild1',
-                                path: 'parent1.child2.grandchild1',
+                                path: 'parent.child2.grandchild1',
                                 focused: false,
                                 touched: false,
+                                blurred: false,
                                 changed: false,
                                 showErrors: false,
                                 extra: {},
@@ -102,6 +107,7 @@ export const nestedState: StateWithForms =  {
                                 label: 'Grandchild 1',
                                 placeholder: 'Grandchild 1',
                                 disabled: false,
+                                validating: false,
                                 autoFocus: false,
                                 autoComplete: 'grandchild1',
                                 errors: [
@@ -110,9 +116,10 @@ export const nestedState: StateWithForms =  {
                             },
                             grandchild2: {
                                 key: 'grandchild2',
-                                path: 'parent1.child2.grandchild2',
+                                path: 'parent.child2.grandchild2',
                                 focused: false,
                                 touched: false,
+                                blurred: false,
                                 changed: false,
                                 showErrors: false,
                                 extra: {},
@@ -128,6 +135,7 @@ export const nestedState: StateWithForms =  {
                                 placeholder: 'Grandchild 2',
                                 disabled: false,
                                 autoFocus: false,
+                                validating: false,
                                 autoComplete: 'grandchild2',
                                 errors: [],
                             },

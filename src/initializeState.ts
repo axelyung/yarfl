@@ -1,5 +1,5 @@
 import creatorFactory from './actions/creatorFactory';
-import { camelCase, firstDefined, kebabCase, mergeDeep, titleCase } from './helpers/utils';
+import { camelCase, firstDefined, kebabCase, mergeDeep, pick, titleCase } from './helpers/utils';
 import { validatorFactory } from './helpers/validator';
 import { createNewField } from './reducers/arrayReducer';
 import { formShowErrorsReducer, formValidateReducer } from './reducers/formReducer';
@@ -18,21 +18,9 @@ import {
 } from './typings';
 
 export const initializeFormState = <S extends object>(config: CompleteConfig<S>, isAsync: boolean = false): FormState<S> => {
-    const {
-        name,
-        extra = {},
-        action = '',
-        method = 'POST',
-    } = config;
+    const { name, extra = {}, action = '', method = '' } = config;
     const fields = initFields(config.fields, !!config.addDefaults, '');
-    const state = {
-        action,
-        name,
-        method,
-        fields,
-        isAsync,
-        extra,
-    };
+    const state = { action, name, method, fields, isAsync, extra };
     return initHooks(config, state as any);
 };
 
@@ -75,19 +63,24 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         focused: false,
         touched: false,
         changed: false,
+        blurred: false,
         showErrors: false,
         extra: field.extra || {},
     };
     if (Array.isArray(field.fields)) {
         // field.fields && field.multiple implies array field
         const dfault = initFields(field.default as any, addDefaults, path);
+        const keys = Object.keys(dfault);
         return {
             ...common,
             fieldType: FieldType.Array,
             default: dfault,
             fields: field.fields.map((f, index) => {
                 const newField = createNewField(key, dfault, index);
-                return mergeDeep(newField, f);
+                const mergedField = mergeDeep(newField, f);
+                // fix for issue #17
+                // filters properties not present in default property
+                return pick(mergedField, keys);
             }),
         } as ArrayFieldState;
     }
@@ -133,6 +126,7 @@ const initField = <K extends string>(key: K, field: ConfigField, addDefaults: bo
         autoFocus,
         autoComplete,
         errors,
+        validating: false,
     };
     return (field.options
         ? {
