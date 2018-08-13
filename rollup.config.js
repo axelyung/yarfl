@@ -47,12 +47,13 @@ const config = {
 if (env === 'production') {
     config.plugins = config.plugins.concat([
         uglify({
+            mangle: { toplevel: true },
             compress: {
+                drop_console: true,
                 pure_getters: true,
                 unsafe: true,
                 unsafe_comps: true,
             },
-            sourceMap: true,
         }),
     ]);
     config.output.file = path.resolve(`dist/${pkg.name}.min.js`);
