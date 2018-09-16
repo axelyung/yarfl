@@ -92,7 +92,7 @@ export default class ThunkFactory {
         this.shouldShowErrors = shouldShowErrorsFactory(config);
     }
 
-    private validateForm = () => (dispatch, getState) => {
+    private validateFormInternal = () => (dispatch, getState) => {
         const formState = this.selector(getState);
         if (formState.isAsync) {
             return this.createValidatorAsync(formState)
@@ -101,16 +101,17 @@ export default class ThunkFactory {
         return dispatch(this.creators.validateForm(this.createValidator(formState)));
     }
 
-    private validateField = (key: string) =>
-        (dispatch, getState) => {
+    public validateField = (key: string) =>
+        async (dispatch, getState) => {
             const formState = this.selector(getState);
             if (formState.isAsync) {
                 dispatch(this.creators.validateFieldStart(key));
-                return this.createValidatorAsync(formState).then(validator => {
-                    return dispatch(this.creators.validateFieldEnd(key, validator));
-                });
             }
-            dispatch(this.creators.validateFieldEnd(key, this.createValidator(formState)));
+            const validator = formState.isAsync
+                ? await this.createValidatorAsync(formState)
+                : this.createValidator(formState);
+            const action = this.creators.validateFieldEnd(key, validator);
+            return dispatch(action);
         }
 
     private postAction = (action: ActionUnknown) =>
@@ -127,112 +128,109 @@ export default class ThunkFactory {
                 if (key) {
                     return dispatch(this.validateField(key) as any);
                 }
-                return dispatch(this.validateForm() as any);
+                return dispatch(this.validateFormInternal() as any);
             }
         }
 
-    public getThunks = () => ({
-        updateForm: (value: object) => (dispatch) => {
-            const action = this.creators.updateForm(value);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        clearForm: () => (dispatch) => {
-            const action = this.creators.clearForm();
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        resetForm: () => (dispatch) => {
-            const action = this.creators.resetForm();
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        validateForm: () => (dispatch, getState) => {
-            const formState = this.selector(getState);
-            if (formState.isAsync) {
-                return this.createValidatorAsync(formState)
+    public updateForm = (value: object) => (dispatch) => {
+        const action = this.creators.updateForm(value);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public clearForm = () => (dispatch) => {
+        const action = this.creators.clearForm();
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public resetForm = () => (dispatch) => {
+        const action = this.creators.resetForm();
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public validateForm = () => (dispatch, getState) => {
+        const formState = this.selector(getState);
+        if (formState.isAsync) {
+            return this.createValidatorAsync(formState)
                     .then(validator => dispatch(this.creators.validateForm(validator)));
-            }
-            return dispatch(this.creators.validateForm(this.createValidator(formState)));
-        },
-        showFormErrors: (showErrors: boolean = true) => (dispatch, getState) => {
-            const action = this.creators.showFormErrors(showErrors);
-            dispatch(action);
-            const validator = this.createValidator(this.selector(getState));
-            return dispatch(this.creators.validateForm(validator));
-        },
-        updateNode: (key: string, value: object) => (dispatch) => {
-            const action = this.creators.updateNode(key, value);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        clearNode: (key: string) => (dispatch) => {
-            const action = this.creators.clearNode(key);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        resetNode: (key: string) => (dispatch) => {
-            const action = this.creators.resetNode(key);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        validateNode: (key: string) => (dispatch, getState) => {
-            const formState = this.selector(getState);
-            if (formState.isAsync) {
-                return this.createValidatorAsync(formState).then(validator => {
-                    return dispatch(this.creators.validateNode(key, validator));
-                });
-            }
-            return dispatch(this.creators.validateNode(key, this.createValidator(formState)));
-        },
-        showNodeErrors: (key: string, showErrors: boolean = true) => (dispatch) => {
-            const action = this.creators.showNodeErrors(key, showErrors);
-            dispatch(action);
-        },
-        updateField: (key: string, value: InputValue) => (dispatch) => {
-            const action = this.creators.updateField(key, value);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        focusField: (key: string) => (dispatch) => {
-            const action = this.creators.focusField(key);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        blurField: (key: string) => (dispatch) => {
-            const action = this.creators.blurField(key);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        clearField: (key: string) => (dispatch) => {
-            const action = this.creators.clearField(key);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        resetField: (key: string) => (dispatch) => {
-            const action = this.creators.resetField(key);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-        validateField: this.validateField,
-        showFieldErrors: (key: string, showErrors: boolean = true) => (dispatch) => {
-            dispatch(this.creators.showFieldErrors(key, showErrors));
-            if (showErrors) {
-                return dispatch(this.validateField(key));
-            }
-        },
-        addArrayField: (key: string) => async (dispatch, getState) => {
-            const action = this.creators.addArrayField(key);
-            await dispatch(action);
-            const arrayField = selectField(this.selector(getState), key);
-            const index = arrayField.fields.length - 1;
-            const keys = Object.keys(arrayField.fields[index]).map(fieldKey => `${key}[${index}].${fieldKey}`);
-            return Promise.all(keys.map(k => dispatch(this.postAction(this.creators.addArrayField(k)))));
-        },
-        deleteArrayField: (key: string, index: number) => (dispatch) => {
-            const action = this.creators.deleteArrayField(key, index);
-            dispatch(action);
-            return dispatch(this.postAction(action));
-        },
-    })
+        }
+        return dispatch(this.creators.validateForm(this.createValidator(formState)));
+    }
+    public showFormErrors = (showErrors: boolean = true) => (dispatch, getState) => {
+        const action = this.creators.showFormErrors(showErrors);
+        dispatch(action);
+        const validator = this.createValidator(this.selector(getState));
+        return dispatch(this.creators.validateForm(validator));
+    }
+    public updateNode = (key: string, value: object) => (dispatch) => {
+        const action = this.creators.updateNode(key, value);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public clearNode = (key: string) => (dispatch) => {
+        const action = this.creators.clearNode(key);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public resetNode = (key: string) => (dispatch) => {
+        const action = this.creators.resetNode(key);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public validateNode = (key: string) => (dispatch, getState) => {
+        const formState = this.selector(getState);
+        if (formState.isAsync) {
+            return this.createValidatorAsync(formState).then(validator => {
+                return dispatch(this.creators.validateNode(key, validator));
+            });
+        }
+        return dispatch(this.creators.validateNode(key, this.createValidator(formState)));
+    }
+    public showNodeErrors = (key: string, showErrors: boolean = true) => (dispatch) => {
+        const action = this.creators.showNodeErrors(key, showErrors);
+        dispatch(action);
+    }
+    public updateField = (key: string, value: InputValue) => (dispatch) => {
+        const action = this.creators.updateField(key, value);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public focusField = (key: string) => (dispatch) => {
+        const action = this.creators.focusField(key);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public blurField = (key: string) => (dispatch) => {
+        const action = this.creators.blurField(key);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public clearField = (key: string) => (dispatch) => {
+        const action = this.creators.clearField(key);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public resetField = (key: string) => (dispatch) => {
+        const action = this.creators.resetField(key);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
+    public showFieldErrors = (key: string, showErrors: boolean = true) => (dispatch) => {
+        dispatch(this.creators.showFieldErrors(key, showErrors));
+        if (showErrors) {
+            return dispatch(this.validateField(key));
+        }
+    }
+    public addArrayField = (key: string) => async (dispatch, getState) => {
+        const action = this.creators.addArrayField(key);
+        await dispatch(action);
+        const arrayField = selectField(this.selector(getState), key);
+        const index = arrayField.fields.length - 1;
+        const keys = Object.keys(arrayField.fields[index]).map(fieldKey => `${key}[${index}].${fieldKey}`);
+        return Promise.all(keys.map(k => dispatch(this.postAction(this.creators.addArrayField(k)))));
+    }
+    public deleteArrayField = (key: string, index: number) => (dispatch) => {
+        const action = this.creators.deleteArrayField(key, index);
+        dispatch(action);
+        return dispatch(this.postAction(action));
+    }
 }

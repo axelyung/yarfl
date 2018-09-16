@@ -56,7 +56,7 @@ const createStateMapper = (config: CompleteConfig) => {
 
 // creates functions to dispatch form actions to the store
 const createDispatchMapper = <S extends object>(config: CompleteConfig<S>) => {
-    const thunks = new ThunkFactory(config).getThunks();
+    const thunks = new ThunkFactory(config);
     return (dispatch: Dispatch<any>) => ({
         updateForm: (value: any) => dispatch(thunks.updateForm(value)),
         clearForm: () => dispatch(thunks.clearForm()),
@@ -119,6 +119,7 @@ const createFormMethods = <S extends object>(config: CompleteConfig<S>) =>
         reset: () => dispatchers.resetForm(),
         showErrors: (showErrors?: boolean) =>
             dispatchers.showFormErrors(showErrors),
+        // tslint:disable-next-line:no-shadowed-variable
         extract: (key: keyof SimpleFieldState, flatten: boolean = false) =>
             extract(state.fields, key, { flatten }),
         bind: createFormBinder(config),

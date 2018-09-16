@@ -71,7 +71,7 @@ const initForm = <S extends object>(config: Config<S>) => {
     const connect = formConnect(configWithDefaults);
     const formProvider = connect(FormProviderComponent);
     // TODO: include option to return selectors
-    const actionCreators = new ThunkFactory(configWithDefaults).getThunks();
+    const actionCreators = new ThunkFactory(configWithDefaults);
     const initialState = { [config.name]: initialFormState };
     return {
         initialState,
